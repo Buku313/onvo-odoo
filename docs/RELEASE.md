@@ -10,6 +10,15 @@ Publisher confirmed by user: ONVOPay. Support: antonio@onvopay.com.
 - Pure security tests: signature rotation, stale/future timestamps, tampered bodies, redirect allowlist, minor units and payment mismatches.
 - Odoo tests: checkout creation and reuse, reconciliation, repeated success notifications, amount mismatch and test/live key mismatch.
 
+## Hosting and distribution
+
+- Private repository: https://github.com/Buku313/onvo-odoo (branch `17.0`).
+- HTTPS demo: https://onvo-odoo.18.207.41.62.sslip.io/shop
+- AWS Lightsail: `onvo-odoo-demo`, us-east-1, small_3_0, USD 12/month. Static IP resource: `onvo-odoo-demo-ip`.
+- ONVO provider is disabled; owner will supply test credentials later.
+- Nine Odoo tests and four standalone security tests passed. GitHub CI passed on the initial release commit.
+- Odoo Apps registration has NOT been submitted. Browser automation failed during the submission workflow.
+
 ## Before publication / live activation
 
 - Free connector confirmed by publisher.
@@ -35,3 +44,9 @@ Publisher confirmed by user: ONVOPay. Support: antonio@onvopay.com.
 - https://apps.odoo.com/apps/vendor-guidelines
 - https://apps.odoo.com/apps/upload
 - https://github.com/odoo/odoo/tree/17.0/addons/payment
+
+## Marketplace registration
+
+Register `ssh://git@github.com/Buku313/onvo-odoo#17.0` at https://apps.odoo.com/apps/upload after signing into the intended publisher account. The repository is private. Odoo documents granting its `online-odoo` GitHub account repository access; no scanner access has been granted yet. Prefer the narrowest access supported and verify its effective permissions before granting.
+
+No official partner/referral code has been issued by this work. `integration=onvo_odoo` identifies traffic from the plugin. ONVO must recognize the optional referral code for any partner or commission program.

@@ -4,6 +4,12 @@ Publisher: **ONVOPay** · Support: **antonio@onvopay.com**
 
 Standalone Odoo 17 payment provider using ONVO hosted Checkout. Version `17.0.0.1.0` is a beta. Production readiness requires an actual ONVO sandbox checkout and signed webhook delivery, beyond the automated mock API tests.
 
+## Hosted demo
+
+https://onvo-odoo.18.207.41.62.sslip.io/shop
+
+The storefront is online. ONVO payment acceptance is disabled until the owner adds sandbox credentials and completes a test checkout. This is a demo, not a production store.
+
 ## Install
 
 Copy `payment_onvo` into an Odoo 17 addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Odoo Community and Enterprise on your own infrastructure or Odoo.sh are supported targets. Odoo Online SaaS cannot install custom Python modules.
