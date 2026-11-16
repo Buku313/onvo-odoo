@@ -1,0 +1,12 @@
+<odoo><record id="payment_provider_form" model="ir.ui.view">
+<field name="name">payment.provider.form.onvo</field><field name="model">payment.provider</field>
+<field name="inherit_id" ref="payment.payment_provider_form"/>
+<field name="arch" type="xml"><xpath expr="//group[@name='provider_credentials']" position="inside">
+<group invisible="code != 'onvo'" groups="base.group_system">
+<field name="onvo_secret_key" password="True" required="code == 'onvo' and state != 'disabled'"/>
+<field name="onvo_webhook_secret" password="True" required="code == 'onvo' and state != 'disabled'"/>
+<field name="onvo_webhook_url" widget="url"/>
+<field name="onvo_referral_code"/>
+<field name="onvo_data_consent"/>
+<div class="text-muted" colspan="2">Enabling ONVO sends the payment amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO. Subscribe the webhook endpoint to checkout_session.succeeded using the signed format.</div>
+</group></xpath></field></record></odoo>

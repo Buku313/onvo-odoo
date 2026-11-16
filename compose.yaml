@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes: ["db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 5s
+      retries: 20
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: ${POSTGRES_PASSWORD}
+    ports: ["127.0.0.1:8170:8069"]
+    volumes:
+      - ./payment_onvo:/mnt/extra-addons/payment_onvo:ro
+      - odoo:/var/lib/odoo
+    command: ["odoo", "--database=onvo_demo", "--db-filter=^onvo_demo$$", "--no-database-list"]
+volumes:
+  db:
+  odoo:

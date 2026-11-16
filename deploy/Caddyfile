@@ -1,0 +1,6 @@
+onvo-odoo.18.207.41.62.sslip.io {
+    encode zstd gzip
+    @database path /web/database/*
+    respond @database 404
+    reverse_proxy odoo:8069
+}

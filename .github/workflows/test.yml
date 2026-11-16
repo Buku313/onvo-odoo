@@ -1,0 +1,18 @@
+name: Odoo 17 tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Security validation
+        run: python3 -m unittest discover -s tests -v
+      - name: Fresh Odoo install and integration tests
+        env:
+          POSTGRES_PASSWORD: disposable-ci-database-only
+        run: |
+          docker compose up -d db
+          docker compose run --rm odoo odoo -d onvo_test -i payment_onvo --without-demo=all --test-enable --test-tags /payment_onvo --stop-after-init
+      - name: Stop test containers
+        if: always()
+        run: POSTGRES_PASSWORD=disposable-ci-database-only docker compose down -v

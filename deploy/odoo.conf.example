@@ -1,0 +1,10 @@
+[options]
+addons_path = /mnt/extra-addons
+admin_passwd = REPLACE_WITH_RANDOM_MASTER_PASSWORD
+db_name = onvo_demo
+dbfilter = ^onvo_demo$
+list_db = False
+proxy_mode = True
+workers = 0
+max_cron_threads = 1
+limit_time_real = 120

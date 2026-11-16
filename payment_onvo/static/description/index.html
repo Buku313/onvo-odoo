@@ -1,0 +1,21 @@
+<section class="container" style="padding:48px 24px;color:#152b2a;">
+<div class="text-center" style="padding:40px;background-color:#e6f7ed;border-radius:20px;">
+<p style="font-size:16px;color:#226349;">ONVOPay · Odoo 17</p>
+<h1 style="font-size:48px;font-weight:700;">ONVO Checkout</h1>
+<p style="font-size:22px;">From an Odoo order to an ONVO payment.</p>
+<p>Hosted checkout. Signed webhooks. Verified payment updates.</p>
+<p><strong>Beta release · Test mode recommended</strong></p>
+</div>
+<div class="row" style="margin-top:32px;">
+<div class="col-md-4"><h3>Hosted payment experience</h3><p>Buyers complete payment on ONVO. Card numbers and security codes do not pass through this connector.</p></div>
+<div class="col-md-4"><h3>CRC and USD</h3><p>One-time payments in Costa Rican colones and US dollars, using the payment methods available to your ONVO account.</p></div>
+<div class="col-md-4"><h3>Verified results</h3><p>Signed webhook validation and server-side checks of session identity, amount, currency and mode before marking a transaction paid.</p></div>
+</div>
+<h2 style="margin-top:32px;">Setup</h2>
+<ol><li>Install ONVO Checkout in Odoo 17 Community or Enterprise on Odoo.sh or your own server.</li><li>Open the ONVO payment provider and enter your ONVO test secret key.</li><li>Create a signed webhook endpoint in ONVO using the URL shown in Odoo. Subscribe to checkout_session.succeeded and copy its signing secret.</li><li>Confirm the data transfer notice, enable test mode and complete a test checkout.</li></ol>
+<h2>External service and data transfer</h2>
+<p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
+<h2>Scope of this release</h2>
+<p>One-time hosted payments, signed Checkout webhooks, return verification and scheduled reconciliation of pending payments. This release does not implement saved cards, recurring billing, refunds from Odoo, manual capture, payouts or POS. Existing payment_onvopaycard transactions and tokens are not migrated automatically. Odoo Online SaaS cannot install this Python add-on.</p>
+<h2>Support</h2><p><a href="mailto:antonio@onvopay.com">antonio@onvopay.com</a></p>
+</section>
