@@ -1,8 +1,7 @@
 <section class="container" style="padding:48px 24px;color:#152b2a;">
-<div class="text-center" style="padding:40px;background-color:#e6f7ed;border-radius:20px;">
+<img src="cover.png" class="img-fluid w-100" alt="ONVO Checkout — Payments for Odoo, USD and CRC"/>
+<div class="text-center" style="padding:24px;background-color:#e6f7ed;border-radius:20px;">
 <p style="font-size:16px;color:#226349;">ONVOPay · Odoo 18</p>
-<h1 style="font-size:48px;font-weight:700;">ONVO Checkout</h1>
-<p style="font-size:22px;">From an Odoo order to an ONVO payment.</p>
 <p>Hosted checkout. Signed webhooks. Verified payment updates.</p>
 <p><strong>Beta release · Test mode recommended</strong></p>
 </div>
@@ -11,8 +10,19 @@
 <div class="col-md-4"><h3>CRC and USD</h3><p>One-time payments in Costa Rican colones and US dollars, using the payment methods available to your ONVO account.</p></div>
 <div class="col-md-4"><h3>Verified results</h3><p>Signed webhook validation and server-side checks of session identity, amount, currency and mode before marking a transaction paid.</p></div>
 </div>
-<h2 style="margin-top:32px;">Setup</h2>
-<ol><li>Install ONVO Checkout in Odoo 18 Community or Enterprise on Odoo.sh or your own server.</li><li>Open the ONVO payment provider and enter your ONVO test secret key.</li><li>Create a signed webhook endpoint in ONVO using the URL shown in Odoo. Subscribe to checkout_session.succeeded and copy its signing secret.</li><li>Confirm the data transfer notice, enable test mode and complete a test checkout.</li></ol>
+<h2 style="margin-top:32px;">Two secrets. Three setup steps.</h2>
+<p>Install ONVO Checkout in Odoo 18 Community or Enterprise on Odoo.sh or your own server. Open the ONVO payment provider from Accounting or Website configuration. The setup instructions are built into the provider form.</p>
+<div class="row" style="margin-top:24px;">
+<div class="col-md-4" style="padding:20px;"><h3>1. Paste your API key</h3><p>Get your test secret API key from the ONVO Dashboard and paste it in the masked Secret API key field. Hosted checkout needs no public or publishable key.</p><p><code>onvo_test_secret_key_...</code></p></div>
+<div class="col-md-4" style="padding:20px;"><h3>2. Copy your webhook URL</h3><p>Use the copy button in Odoo. In ONVO, open <strong>Developers → Webhooks → Add webhook</strong> in the same test mode, paste the URL and select this event:</p><p><code>checkout_session.succeeded</code></p><p>Copy the endpoint's <code>whsec_...</code> signing secret back into Odoo.</p></div>
+<div class="col-md-4" style="padding:20px;"><h3>3. Save and test</h3><p>Confirm the data-transfer checkbox, select test mode and save. Use <strong>Test connection</strong> on the ONVO webhook. Then publish the provider, complete a test checkout and confirm that the Odoo transaction reaches <strong>Done</strong>.</p></div>
+</div>
+<div style="padding:24px;background-color:#e6f7ed;border-radius:12px;margin-bottom:24px;">
+<h3>Setup details that matter</h3>
+<p>Your Odoo site needs a public HTTPS domain on port 443. The webhook URL is generated for your provider; no route or code changes are needed. The API key and webhook must belong to the same ONVO account and use the same test or live mode.</p>
+<p>The webhook signing secret is different from the API key. Use ONVO's signed webhook format. If needed, retrieve it with <strong>Reveal signing secret</strong> in the endpoint's detail page.</p>
+<p>For live payments, replace both secrets with live-mode credentials and switch Odoo to live mode in the same save. Repeat ONVO's connection test. An optional ONVO-issued referral code can be added separately.</p>
+</div>
 <h2>External service and data transfer</h2>
 <p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
 <h2>Scope of this release</h2>

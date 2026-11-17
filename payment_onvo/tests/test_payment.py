@@ -62,6 +62,15 @@ class TestOnvo(TransactionCase):
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
             self.provider.onvo_secret_key = 'onvo_live_secret_fixture'
 
+    def test_webhook_url_uses_saved_provider_identity(self):
+        with patch.object(type(self.provider), 'get_base_url', return_value='https://shop.example.com/'):
+            self.provider.invalidate_recordset(['onvo_webhook_url'])
+            expected = 'https://shop.example.com/payment/onvo/webhook/%s' % self.provider.id
+            self.assertEqual(self.provider.onvo_webhook_url, expected)
+            draft = self.provider.new({}, origin=self.provider)
+            self.assertEqual(draft.onvo_webhook_url, expected)
+            self.assertFalse(self.provider.new({}).onvo_webhook_url)
+
     def test_session_uniqueness_is_enforced(self):
         tx = self.make_tx()
         tx.with_context(payment_safe_write=True).write({'onvo_session_id': 'cs_unique'})
