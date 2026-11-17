@@ -2,6 +2,17 @@
 
 Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 
+## Setup and marketplace release 0.3.0 (beta)
+
+- Add the shared ONVO cover to the manifest and HTML listing for every supported major version.
+- Organize credentials into three numbered steps, with masked fields, key examples and a native copy button for the webhook URL.
+- Explain ONVO Dashboard endpoint creation, the exact event, signed format, HTTPS requirements, test connection and the test-to-live transition.
+- Give actionable mode/key and webhook-secret errors without exposing secret values.
+- Keep unsaved providers from presenting invalid webhook URLs; retain the correct URL while editing a saved provider.
+- Derive package versions from the manifest and retain each migration's original release suffix when building other Odoo versions.
+
+Local Odoo 17 installation and all 13 integration tests passed, along with four standalone security tests. Full four-version CI validation is recorded below when complete. API responses are mocked; live ONVO sandbox acceptance still needs the owner's test credentials.
+
 ## Compatibility release 0.2.0 (beta)
 
 | Odoo | Add-on version | Test runtime | Result |
@@ -30,13 +41,13 @@ The first-beta Odoo 17 local demo database was also upgraded successfully: its p
 
 ## Hosting and publication
 
-Private repository: https://github.com/Buku313/onvo-odoo
+Repository: https://github.com/Buku313/onvo-odoo (currently public; visibility not changed by this release)
 
 Hosted Odoo 17 demo: https://onvo-odoo.18.207.41.62.sslip.io/shop
 
 AWS Lightsail instance: `onvo-odoo-demo`, us-east-1, small_3_0, USD 12/month. Static IP: `onvo-odoo-demo-ip`. The owner explicitly requested keeping the server on 2026-11-17. It has not been deleted.
 
-The ONVO provider remains disabled while the owner supplies sandbox credentials. Odoo Apps registration is NOT submitted and no marketplace scanner access has been granted. These account steps are explained in ODOO_APPS_UPLOAD.md.
+The ONVO provider remains disabled while the owner supplies sandbox credentials. The owner registered all four branches and all four Odoo Apps listings were verified public on 2026-11-17. Source updates require a fresh scan of the existing repositories; see ODOO_APPS_UPLOAD.md.
 
 ## Before production activation
 

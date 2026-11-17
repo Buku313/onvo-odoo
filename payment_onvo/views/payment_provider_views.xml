@@ -1,12 +1,78 @@
-<odoo><record id="payment_provider_form" model="ir.ui.view">
-<field name="name">payment.provider.form.onvo</field><field name="model">payment.provider</field>
-<field name="inherit_id" ref="payment.payment_provider_form"/>
-<field name="arch" type="xml"><xpath expr="//group[@name='provider_credentials']" position="inside">
-<group invisible="code != 'onvo'" groups="base.group_system">
-<field name="onvo_secret_key" password="True" required="code == 'onvo' and (is_live or is_published)"/>
-<field name="onvo_webhook_secret" password="True" required="code == 'onvo' and (is_live or is_published)"/>
-<field name="onvo_webhook_url" widget="url"/>
-<field name="onvo_referral_code"/>
-<field name="onvo_data_consent"/>
-<div class="text-muted" colspan="2">Enabling ONVO sends the payment amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO. Subscribe the webhook endpoint to checkout_session.succeeded using the signed format.</div>
-</group></xpath></field></record></odoo>
+<odoo>
+    <record id="payment_provider_form" model="ir.ui.view">
+        <field name="name">payment.provider.form.onvo</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='provider_credentials']" position="inside">
+                <group invisible="code != 'onvo'" groups="base.group_system" colspan="2" col="2">
+                    <div class="alert alert-info" role="status" colspan="2">
+                        <strong>Connect ONVO in three steps</strong><br/>
+                        You need one secret API key and one webhook signing secret. No public key is needed.
+                        Start with test credentials from your ONVO account.
+                    </div>
+                    <group string="1. Paste your ONVO API key" colspan="2" col="2">
+                        <div colspan="2">
+                            Get your <strong>secret API key</strong> from the
+                            <a href="https://onvopay.com/" target="_blank" rel="noopener noreferrer">ONVO Dashboard</a>.
+                            Use <code>onvo_test_secret_key_...</code> for testing.
+                        </div>
+                        <field name="onvo_secret_key" password="True"
+                               placeholder="onvo_test_secret_key_..."
+                               required="code == 'onvo' and (is_live or is_published)"/>
+                    </group>
+                    <group string="2. Connect your webhook" colspan="2" col="2">
+                        <div colspan="2">
+                            In ONVO, select the same <strong>test or live mode</strong> as your API key.
+                            Open <strong>Developers → Webhooks → Add webhook</strong>.
+                            Copy the URL below and select <code>checkout_session.succeeded</code>.
+                        </div>
+                        <field name="onvo_webhook_url" widget="CopyClipboardChar" readonly="1"/>
+                        <div class="text-muted" colspan="2">
+                            The URL must use your public HTTPS domain on port 443.
+                            If it shows localhost, HTTP or the wrong domain, correct your Odoo website/base URL first.
+                            Save a new provider before copying its URL.
+                        </div>
+                        <field name="onvo_webhook_secret" password="True" placeholder="whsec_..."
+                               required="code == 'onvo' and (is_live or is_published)"/>
+                        <div class="text-muted" colspan="2">
+                            Paste the signing secret shown when ONVO creates the endpoint.
+                            To find it again, open the endpoint and choose <strong>Reveal signing secret</strong>.
+                            Use the signed webhook format; the previous X-Webhook-Secret format is not supported.
+                        </div>
+                    </group>
+                    <group string="3. Save and test" colspan="2" col="2">
+                        <field name="onvo_data_consent"/>
+                        <div class="text-muted" colspan="2">
+                            With your permission, Odoo sends the amount, currency, transaction reference,
+                            buyer email, integration identifier and optional referral code to ONVO.
+                            Buyers enter card details on ONVO.
+                        </div>
+                        <div colspan="2">
+                            Leave Live off at the top of this form and keep the provider active.
+                            Save both secrets and the consent checkbox together.
+                            Then use <strong>Test connection</strong> on the webhook in ONVO and confirm a successful response.
+                            Publish the provider when ready to try checkout, complete a test payment in USD or CRC,
+                            and check that its Odoo transaction reaches <strong>Done</strong>.
+                        </div>
+                        <div class="text-muted" colspan="2">
+                            Before going live, replace the test API key with <code>onvo_live_secret_key_...</code>,
+                            create a live-mode webhook and paste its signing secret. Change Odoo to live mode
+                            and save these changes together, then test the live webhook connection.
+                        </div>
+                        <div colspan="2">
+                            <a href="https://docs.onvopay.com/en/webhooks" target="_blank" rel="noopener noreferrer">ONVO webhook setup guide</a>
+                        </div>
+                    </group>
+                    <group string="Optional referral attribution" colspan="2" col="2">
+                        <field name="onvo_referral_code" placeholder="Only if ONVO gave you a partner code"/>
+                        <div class="text-muted" colspan="2">
+                            Leave blank if you do not have an ONVO-issued code. The connector identifies itself to ONVO automatically.
+                            Referral credit depends on your agreement with ONVO.
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

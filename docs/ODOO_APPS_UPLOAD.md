@@ -4,7 +4,7 @@ Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Price: **Free**
 
 Odoo Apps reads a Git repository. You register each version branch; you do not upload the ZIP to the marketplace. The ZIPs are for direct installation.
 
-## 1. Give the Odoo scanner access to this private repository
+## 1. Give the Odoo scanner access if the repository is private
 
 Open https://github.com/Buku313/onvo-odoo/settings/access and use the repository's collaborator controls to invite **online-odoo**. This is the exact account in Odoo's official FAQ, not `odoo-online`. Grant access only to this repository, not an entire organization. Check the permission GitHub will grant before confirming: personal repositories may offer broader collaborator access than a read-only organization role. If that is unacceptable, arrange an alternative with Odoo Apps support instead of granting broader access silently.
 
@@ -55,6 +55,10 @@ Users choose the package matching their Odoo major version. The Python add-on is
 
 The connector supports one-time CRC/USD hosted Checkout, signed webhooks, server-side verification and pending-payment reconciliation. It does not add POS, subscriptions, saved cards, refunds from Odoo or payouts. Referral metadata identifies the integration; any commercial referral credit still requires an ONVO-recognized code.
 
-## Current account steps still needed
+## Current publication status
 
-No Odoo scanner access has been granted and no marketplace registration has been submitted by this work. Complete steps 1–3 from your accounts. Your hosted demo is being kept running as requested; ONVO checkout remains disabled until you supply your sandbox credentials.
+The owner registered all four branches, and the Odoo 17, 18, 19 and 20 listings were verified publicly accessible on 2026-11-17. The repository is currently public; its visibility was not changed by this release. Do not register duplicates. For updates, open **My Repos** and choose **Scan** beside each existing branch, then check the corresponding app page.
+
+Release 0.3.0 adds `static/description/cover.png` to each manifest's `images` list and places it at the top of the description. The provider form includes a copyable webhook URL and numbered key/webhook setup instructions. After scanning, verify the new cover and the heading **Two secrets. Three setup steps.** on all four listings.
+
+The hosted demo is retained as requested; ONVO checkout remains disabled until its sandbox credentials are supplied.

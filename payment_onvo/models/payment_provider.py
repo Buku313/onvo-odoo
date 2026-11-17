@@ -11,17 +11,24 @@ class PaymentProvider(models.Model):
     _inherit = 'payment.provider'
 
     code = fields.Selection(selection_add=[('onvo', 'ONVO')], ondelete={'onvo': 'set default'})
-    onvo_secret_key = fields.Char(string='ONVO Secret Key', groups='base.group_system', copy=False, required_if_provider='onvo')
-    onvo_webhook_secret = fields.Char(string='ONVO Webhook Signing Secret', groups='base.group_system', copy=False, required_if_provider='onvo')
+    onvo_secret_key = fields.Char(string='Secret API key', groups='base.group_system', copy=False,
+        required_if_provider='onvo',
+        help='Copy your secret API key from the ONVO Dashboard. Use onvo_test_secret_key_... in test mode or onvo_live_secret_key_... in live mode. A public / publishable key is not needed for hosted checkout.')
+    onvo_webhook_secret = fields.Char(string='Webhook signing secret', groups='base.group_system', copy=False,
+        required_if_provider='onvo',
+        help='Copy the whsec_... signing secret from this endpoint in ONVO > Developers > Webhooks. This is different from your API key. The endpoint and API key must use the same test or live mode.')
     onvo_data_consent = fields.Boolean(string='Send payment information to ONVO', copy=False,
         help='Send the amount, currency, transaction reference, buyer email, integration identifier and optional referral code to ONVO to process checkout. Card details are entered on ONVO.')
     onvo_referral_code = fields.Char(string='ONVO Referral Code', groups='base.group_system',
         help='Optional ONVO-issued partner code. Sent in checkout metadata for attribution; commission eligibility is managed by ONVO.')
-    onvo_webhook_url = fields.Char(compute='_compute_onvo_webhook_url')
+    onvo_webhook_url = fields.Char(string='Webhook URL', compute='_compute_onvo_webhook_url',
+        help='Copy this exact URL into ONVO > Developers > Webhooks. Your Odoo site must have a publicly reachable HTTPS domain on port 443. Save a new provider before copying its URL.')
 
     def _compute_onvo_webhook_url(self):
         for provider in self:
-            provider.onvo_webhook_url = '%s/payment/onvo/webhook/%s' % (provider.get_base_url().rstrip('/'), provider.id)
+            provider.onvo_webhook_url = (
+                '%s/payment/onvo/webhook/%s' % (provider.get_base_url().rstrip('/'), provider._origin.id)
+                if provider._origin.id else False)
 
     def _onvo_mode(self):
         self.ensure_one()
@@ -45,9 +52,15 @@ class PaymentProvider(models.Model):
         for provider in self.filtered(lambda p: p.code == 'onvo' and p._onvo_requires_configuration()):
             mode = provider._onvo_mode()
             if not (provider.onvo_secret_key or '').startswith('onvo_%s_secret_' % mode):
-                raise ValidationError(_('Use an ONVO secret key matching the provider mode.'))
+                raise ValidationError(_(
+                    'The ONVO provider is in %(mode)s mode. Paste a secret API key starting with '
+                    'onvo_%(mode)s_secret_ from the ONVO Dashboard. A publishable key will not work.',
+                    mode=mode))
             if not (provider.onvo_webhook_secret or '').startswith('whsec_'):
-                raise ValidationError(_('Configure the ONVO signed webhook secret.'))
+                raise ValidationError(_(
+                    'Paste the whsec_... signing secret from ONVO > Developers > Webhooks. '
+                    'Create a signed endpoint with the Webhook URL shown in Odoo and subscribe '
+                    'to checkout_session.succeeded. This secret is different from your API key.'))
             if not provider.onvo_data_consent:
                 raise ValidationError(_('Confirm the payment data transfer to ONVO before enabling checkout.'))
 
