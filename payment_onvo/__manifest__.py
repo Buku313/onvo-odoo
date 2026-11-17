@@ -9,7 +9,7 @@
     'license': 'LGPL-3',
     'images': ['static/description/cover.png'],
     'depends': ['payment'],
-    'data': ['security/ir.model.access.csv', 'wizard/test_checkout_views.xml', 'views/payment_templates.xml', 'views/payment_provider_views.xml', 'data/payment_provider_data.xml', 'data/ir_cron.xml'],
+    'data': ['security/ir.access.csv', 'wizard/test_checkout_views.xml', 'views/payment_templates.xml', 'views/payment_provider_views.xml', 'data/payment_provider_data.xml', 'data/ir_cron.xml'],
     'post_init_hook': 'post_init_hook',
     'uninstall_hook': 'uninstall_hook',
     'installable': True,
