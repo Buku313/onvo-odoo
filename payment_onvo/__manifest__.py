@@ -1,9 +1,9 @@
 {
-    'name': 'ONVO Payments - Checkout & Apple Pay',
+    'name': 'ONVO Payments - Cards, Apple Pay, Google Pay & SINPE',
     'version': '17.0.0.5.0',
     'category': 'Accounting/Payment Providers',
-    'summary': 'ONVOPay payment gateway for Costa Rica: cards, Apple Pay, CRC and USD',
-    'description': 'ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica. Accept one-time card payments and Apple Pay through ONVO hosted Checkout, subject to account activation, payment-method eligibility and device support. Supports CRC and USD. Pasarela de pagos para Odoo: cobros con tarjeta y Apple Pay en colones y dolares mediante Checkout hospedado de ONVO. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',
+    'summary': 'ONVOPay for Costa Rica: cards, Apple Pay, Google Pay, SINPE Movil, CRC/USD',
+    'description': 'ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica. Accept one-time card payments, Apple Pay, Google Pay and SINPE Movil (CRC) through ONVO hosted Checkout, subject to account activation, payment-method eligibility and device support. Supports CRC and USD. Pasarela de pagos para Odoo: cobros con tarjeta, Apple Pay, Google Pay y SINPE Movil en colones y dolares mediante Checkout hospedado de ONVO. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',
     'website': 'https://github.com/Buku313/onvo-odoo',
     'author': 'ONVOPay',
     'support': 'antonio@onvopay.com',

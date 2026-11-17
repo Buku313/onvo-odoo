@@ -2,9 +2,9 @@
 <img src="cover.png" class="img-fluid w-100" alt="ONVO Checkout — Payments for Odoo, USD and CRC"/>
 <div class="text-center" style="padding:24px;background-color:#e6f7ed;border-radius:20px;">
 <p style="font-size:16px;color:#226349;">ONVOPay · Odoo 17</p>
-<h1>ONVO Payments for Odoo: Checkout &amp; Apple Pay</h1>
+<h1>ONVO Payments for Odoo: Cards, Apple Pay, Google Pay &amp; SINPE Móvil</h1>
 <p>Free ONVOPay payment gateway for Odoo eCommerce in Costa Rica. Accept one-time payments in CRC and USD through ONVO hosted checkout.</p>
-<p>Card payments and Apple Pay depend on your ONVO account eligibility and enabled methods. Apple Pay also requires a compatible device and Wallet.</p>
+<p>Cards, Apple Pay, Google Pay and SINPE Móvil depend on your ONVO account eligibility and enabled methods. Wallet payments require a compatible device and account; SINPE Móvil requires CRC.</p>
 <p><strong>Beta release · Test mode recommended</strong></p>
 </div>
 <div class="row" style="margin-top:32px;">
@@ -29,6 +29,15 @@
 <p>The provider's <strong>Apple Pay</strong> tab guides you through ONVO activation, testing and the move to live mode. Hosted checkout uses your existing credentials and webhook. No extra SDK or Odoo-domain registration is needed.</p>
 <ol><li>Enable card payments and Apple Pay in your ONVO account's matching mode.</li><li>In Odoo test mode, choose <strong>Create a test checkout</strong> and select USD 1.00 or CRC 1,000.00.</li><li>Open or copy the test link to an Apple device with Wallet, select Apple Pay, then choose <strong>Check payment result</strong> in Odoo.</li></ol>
 <p>The setup tool is restricted to Settings administrators and sandbox payments. Apple Pay availability depends on ONVO account activation, merchant eligibility, mode and device. Odoo reports checkout completion; activation status remains in the ONVO Dashboard.</p>
+<h2>Cards, Apple Pay, Google Pay and SINPE Móvil for Odoo</h2>
+<p>One ONVO hosted checkout connection lets buyers choose among the payment methods ONVO makes available for your account, mode, order currency and device. These options appear on ONVO's payment page; this module does not install separate wallet or bank-transfer buttons inside Odoo.</p>
+<div class="row">
+<div class="col-md-6"><h3>Google Pay for Odoo</h3><p>Enable card payments and Google Pay in ONVO Settings → Payment methods for the matching test or live mode. Eligible buyers can pay using a supported card in their Google account. ONVO handles the hosted Google Pay integration; no Google merchant registration is needed for this hosted flow.</p></div>
+<div class="col-md-6"><h3>SINPE Móvil para Odoo</h3><p>Cobrá en colones con SINPE Móvil cuando esté habilitado y disponible en tu Checkout de ONVO. Usá una orden en CRC y seguí las instrucciones de transferencia que muestra ONVO. Una transferencia iniciada no equivale a un pago confirmado: Odoo espera la verificación del resultado.</p></div>
+</div>
+<h3>Other ONVO payment methods</h3>
+<p>Looking for SINPE PIN bank transfers, Credix installments, Zunify or crypto payments? Check availability with ONVO for your merchant account and hosted Checkout. These are not separate native Odoo integrations in this release. Each method must be enabled, offered for the order and tested through completed Checkout reconciliation before merchant rollout. Credix financing is distinct from Odoo invoice payment terms.</p>
+<h3>Which webhook should I configure?</h3><p>For this hosted Checkout connector, keep <code>checkout_session.succeeded</code>. Direct Payment Intent API guides describe a different integration; do not replace the connector's webhook event with those events.</p>
 <h2>External service and data transfer</h2>
 <p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
 <h2>Scope of this release</h2>
