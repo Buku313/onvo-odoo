@@ -2,25 +2,29 @@
 
 Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Free · LGPL-3
 
-One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.2.0` remains a beta until an actual ONVO sandbox checkout and signed webhook delivery are verified. Automated tests mock ONVO's API and do not replace that acceptance test.
+One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.3.0` remains a beta until an actual ONVO sandbox checkout and signed webhook delivery are verified. Automated tests mock ONVO's API and do not replace that acceptance test.
 
 [Odoo Apps publishing instructions](docs/ODOO_APPS_UPLOAD.md) · [Release record](docs/RELEASE.md)
 
 ## Installation
 
-Download the ZIP matching your Odoo major version from this private repository's Releases. Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Do not install all four packages together.
+Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Do not install all four packages together.
 
 Targets are Community and Enterprise installations that allow Python add-ons, including Odoo.sh and self-hosted servers. Odoo Online SaaS cannot install this add-on. Community containers are used for automated compatibility tests; no proprietary Enterprise runtime is bundled or independently certified by this project. Future major versions require explicit compatibility testing.
 
 ## Configure ONVO
 
 1. Open the ONVO payment provider under Accounting / Website configuration.
-2. Enter an ONVO test secret key (`onvo_test_secret_...`).
-3. Create a signed ONVO webhook using the URL displayed by the provider; subscribe to `checkout_session.succeeded`.
-4. Enter the endpoint's `whsec_...` signing secret and confirm the data-transfer notice.
-5. Odoo 17–19: choose **Test Mode** and publish the provider. Odoo 20: leave **Live** off, keep the provider active, and publish it after configuring test credentials.
-6. Complete a sandbox payment and verify that its Odoo transaction reaches Done. Test cancellation, duplicate webhook delivery and pending-payment reconciliation too.
-7. Only switch to live mode after configuring a matching live secret key and live webhook endpoint.
+2. Get your secret API key from the [ONVO Dashboard](https://onvopay.com/). Paste `onvo_test_secret_key_...` in **Secret API key**. Hosted checkout needs no publishable key.
+3. Use the **copy button** beside **Webhook URL**. In ONVO test mode, open **Developers → Webhooks → Add webhook**, paste the URL and subscribe to `checkout_session.succeeded`. ONVO requires a public HTTPS domain on port 443; localhost and bare IP addresses will not work. Correct Odoo's website/base URL first if the displayed URL is wrong.
+4. Paste the endpoint's `whsec_...` secret in **Webhook signing secret**, then confirm the data-transfer checkbox. This secret is separate from the API key. Retrieve it again through **Reveal signing secret** on the ONVO endpoint if needed.
+5. Odoo 17–19: choose **Test Mode**. Odoo 20: leave **Live** off and keep the provider active. Save both secrets, the mode and consent together. In ONVO, use the endpoint's **Test connection** and confirm success. This checks webhook delivery/signing, not API-key validity or a payment.
+6. Publish the provider when ready to test checkout. Complete a sandbox payment in USD or CRC and verify its Odoo transaction reaches **Done**. Test cancellation, duplicate webhook delivery and pending-payment reconciliation too.
+7. To go live, obtain a matching live secret API key and create a live-mode webhook. Replace **both** secrets, switch Odoo to live mode and save together. Repeat the ONVO connection test. Test and live endpoints have separate signing secrets.
+
+See [ONVO's signed webhook guide](https://docs.onvopay.com/en/webhooks). Endpoint creation is done in the Dashboard; ONVO does not expose it through API keys. The previous `X-Webhook-Secret` format is not supported.
+
+If checkout says no payment option is available, check the provider's mode, publication status, website/company, supported currency and country restrictions, and that its ONVO payment method is active. In test mode, use an authorized test user; Odoo can hide test providers from public visitors. The hosted demo deliberately keeps ONVO disabled until its sandbox credentials are supplied.
 
 ONVO's hosted page controls payment methods offered to the merchant. This connector supports one-time automatic capture in CRC and USD. Saved cards, refunds from Odoo, subscriptions, manual capture, POS and payouts are outside this release.
 
