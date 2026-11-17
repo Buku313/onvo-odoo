@@ -29,9 +29,23 @@ Copy this prompt with the guide: **“Help configure payment_onvo for my Odoo ve
 
 After installation, the guide can be served from `/payment_onvo/static/docs/llms-full.txt` on your own Odoo host. It contains no merchant credentials. Documentation helps an assistant follow the process; it does not automatically configure your account or replace acceptance testing.
 
+## Fastest developer setup
+
+Start with the [six-step checklist](payment_onvo/static/docs/quickstart.txt): package → website/currency → two secrets → webhook test → sandbox order → deliberate live transition.
+
+For the latest source including these guides, select your major version before cloning:
+
+```sh
+git clone --branch 17.0 --single-branch https://github.com/Buku313/onvo-odoo.git
+```
+
+Replace `17.0` with your installed major version. Add the cloned repository directory to your existing Odoo `addons_path` (preserve the other paths), restart Odoo and install `payment_onvo`. On Odoo.sh, add the `payment_onvo` directory to your project's add-ons source, commit/deploy it through your normal branch workflow and install the module. Upgrade an existing installation after backing up; do not create a duplicate provider merely to update files.
+
+Existing GitHub release ZIPs may predate documentation-only commits. Check the archive for `payment_onvo/static/docs/quickstart.txt` and `llms-full.txt`; use the matching source branch if absent. Odoo Apps picks up branch changes after a repository scan.
+
 ## Installation
 
-Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Payments - Cards, Apple Pay, Google Pay & SINPE Móvil**. Do not install all four packages together.
+Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install technical module **`payment_onvo`** (displayed as ONVO Payments). Do not install all four packages together.
 
 Targets are Community and Enterprise installations that allow Python add-ons, including Odoo.sh and self-hosted servers. Odoo Online SaaS cannot install this add-on. Community containers are used for automated compatibility tests; no proprietary Enterprise runtime is bundled or independently certified by this project. Future major versions require explicit compatibility testing.
 
@@ -91,7 +105,7 @@ Upgrade `payment_onvo` through Apps after replacing the folder. The `X.0.0.2.0` 
 
 ## Build and test locally
 
-Use Python 3 and Docker. Create `.env` with a random `POSTGRES_PASSWORD`.
+Use Python 3 and Docker. Create `.env` with a random `POSTGRES_PASSWORD` (for example, generate one with `openssl rand -hex 32`; do not commit it).
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -100,12 +114,18 @@ POSTGRES_VERSION=16 ODOO_VERSION=20.0 ADDONS_PATH=./build/odoo20/payment_onvo do
 POSTGRES_VERSION=16 ODOO_VERSION=20.0 ADDONS_PATH=./build/odoo20/payment_onvo docker compose -p onvo-test20 run --rm odoo odoo -d onvo_test20 -i payment_onvo --without-demo=all --test-enable --test-tags /payment_onvo --stop-after-init
 ```
 
+Those commands run automated tests and exit; they do not launch a configured store. To inspect that test database locally, start the same container with the database selected explicitly:
+
+```sh
+POSTGRES_VERSION=16 ODOO_VERSION=20.0 ADDONS_PATH=./build/odoo20/payment_onvo docker compose -p onvo-test20 run --rm --service-ports odoo odoo -d onvo_test20 --db-filter='^onvo_test20$' --no-database-list
+```
+
+Open `http://localhost:8170`. This local URL cannot receive ONVO webhooks; use a separate HTTPS test deployment for end-to-end payments. Do not expose a disposable test database publicly. The compose file's default command selects `onvo_demo`, so explicitly selecting the test database matters.
+
 Odoo 20 needs PostgreSQL 16 or newer; the test uses an isolated Compose project to keep that data separate from PostgreSQL 15. Never attach an existing PostgreSQL data volume to a different major image. Use 17, 18 or 19 similarly. The build command refuses to overwrite an existing output folder. Use a fresh output folder for each build. GitHub Actions runs the four-version test matrix. Do not advertise compatibility solely because a ZIP can be generated.
 
-## Hosted sandbox
+## Shared demo — live payments
 
 https://onvo-odoo.18.207.41.62.sslip.io/shop
 
-The existing Odoo 17 demo is retained at the owner's request. It costs USD 12/month on AWS Lightsail. Its ONVO provider is published in test mode with credentials stored only on the server. Real test-session creation and a locally signed webhook probe have passed; completing a payment and confirming delivery from ONVO remain acceptance tasks. The demo is not a production store.
-
-Secrets and local deployment records are excluded from Git. The server administrator login is not published in this repository.
+The shared Odoo 17 demo was switched to **live mode on 2026-11-17** at the owner's request. Its USD 1.00 product charges real money when purchased. It is not a public sandbox. Use your own test-mode provider for the setup checklist. Live credentials and webhook authentication were checked, but a locally signed probe is not evidence of an ONVO-origin live payment delivery; record completed payment/reconciliation evidence separately.
