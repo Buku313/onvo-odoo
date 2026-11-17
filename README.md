@@ -1,6 +1,6 @@
-# ONVO Payments for Odoo 17–20 — Checkout & Apple Pay
+# ONVO Payments for Odoo 17–20 — Cards, Apple Pay, Google Pay & SINPE Móvil
 
-Free **ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica**. Accept one-time payments in **CRC and USD** through ONVO hosted checkout, with cards and Apple Pay when enabled and eligible on your merchant account. Includes signed webhooks, server-side payment verification and guided setup.
+Free **ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica**. Accept one-time payments in **CRC and USD** through ONVO hosted checkout, with cards, Apple Pay, Google Pay and SINPE Móvil (CRC) when enabled and eligible on your merchant account. Includes signed webhooks, server-side payment verification and guided setup.
 
 **Pasarela de pagos ONVO para Odoo:** cobrá en colones y dólares mediante Checkout hospedado. Compatible con instalaciones que permiten módulos Python en Odoo.sh o servidores propios; no con Odoo Online SaaS. El conector es gratuito; las comisiones de ONVO aplican por separado.
 
@@ -23,7 +23,7 @@ Planned B2B expansion: [payment model](docs/B2B_PAYMENT_MODEL.md), [comprehensiv
 
 ## Installation
 
-Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Payments - Checkout & Apple Pay**. Do not install all four packages together.
+Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Payments - Cards, Apple Pay, Google Pay & SINPE Móvil**. Do not install all four packages together.
 
 Targets are Community and Enterprise installations that allow Python add-ons, including Odoo.sh and self-hosted servers. Odoo Online SaaS cannot install this add-on. Community containers are used for automated compatibility tests; no proprietary Enterprise runtime is bundled or independently certified by this project. Future major versions require explicit compatibility testing.
 
@@ -48,6 +48,26 @@ ONVO's hosted page controls payment methods offered to the merchant. This connec
 Open the ONVO provider's **Apple Pay** tab. It links to the ONVO Dashboard activation steps and provides **Create a test checkout** for Settings administrators. Select a test amount, create a link, open it on an Apple device with Wallet, choose Apple Pay, then use **Check payment result** in Odoo. The tool rejects live mode and reuses an existing session within the same test window. No extra publishable key, SDK or Odoo-domain registration is required for this hosted flow.
 
 The owner has activated Apple Pay for the demo's test account. Individual merchants enable it for their own accounts in ONVO. Odoo shows checkout completion, not an independently verified Apple Pay activation status; full device/Wallet acceptance remains a manual test.
+
+## Payment methods: cards, Apple Pay, Google Pay and SINPE Móvil
+
+ONVO decides which methods to offer on its hosted checkout based on the merchant account, test/live mode, currency, amount and buyer device. The connector creates a one-time Checkout session and verifies its final payment status. It does not add separate native Odoo wallet buttons.
+
+| Buyer search / payment option | Merchant setup and limits |
+| --- | --- |
+| Card payments / pagos con tarjeta | Enable cards in ONVO; accepted networks depend on the merchant account. |
+| Apple Pay for Odoo | Activate the account and enable cards plus Apple Pay in the matching mode; use a compatible device with Wallet. |
+| Google Pay for Odoo | Enable cards plus Google Pay in the matching mode; buyer needs a supported card and device/browser. Hosted Checkout needs no separate Google merchant registration. |
+| SINPE Móvil para Odoo / SINPE Movil | Enable the method in ONVO and use **CRC**. Follow ONVO's transfer instructions and wait for confirmed payment. The USD 1 test product is not a SINPE Móvil test. |
+| SINPE PIN, Credix, Zunify, crypto | Ask ONVO which options are available in your hosted Checkout. Account approval, currency and amount restrictions may apply. End-to-end acceptance for these methods has not been verified by this project. |
+
+**Cómo cobrar con SINPE Móvil en Odoo:** instalá el conector de tu versión, configurá las dos claves del mismo modo, habilitá SINPE Móvil en ONVO y probá una orden en colones. Confirmá que el pago completado se refleje en Odoo antes de ofrecerlo a clientes.
+
+**Google Pay setup:** in ONVO, open Settings → Payment methods and enable cards and Google Pay. Test and live settings are separate. If the option is unavailable, request enablement from ONVO. The buyer chooses Google Pay on ONVO's hosted page.
+
+For every method, retain the **`checkout_session.succeeded`** webhook used by this connector. ONVO's direct Payment Intent guides use other events and do not replace this Checkout integration. Do not mark a transfer as paid based on a screenshot or browser return. Test completion, cancellation, delayed confirmation and duplicate notifications before rollout.
+
+Official references: [Google Pay](https://docs.onvopay.com/en/payments/google-pay), [SINPE Móvil](https://docs.onvopay.com/en/payments/sinpe-mobile), [hosted Checkout](https://docs.onvopay.com/en/checkout/overview).
 
 ## Data and referral attribution
 
