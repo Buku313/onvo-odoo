@@ -2,6 +2,15 @@
 
 Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 
+## Payment branding release 0.4.0 (beta)
+
+- Use ONVO's current public wordmark in a compact checkout badge and square provider/app icon.
+- Supply the payment-method image and provider image on new installations for Odoo 17–20.
+- Upgrade the old bundled image and fill missing images, while retaining merchant-customized artwork and all payment settings.
+- Document the hosted Apple Pay rollout and a separate optional embedded SDK implementation in APPLE_PAY_PLAN.md. This release does not activate Apple Pay or accept merchant terms.
+
+The hosted provider has since been enabled in test mode using the owner's credentials. ONVO accepted the API key, actual sandbox Checkout session creation and redirect rendering succeeded, and the smoke session was expired/cancelled. A locally generated signed webhook probe returned 200 and an unsigned probe returned 403. These probes do not establish delivery from ONVO or a completed card/wallet payment.
+
 ## Setup and marketplace release 0.3.0 (beta)
 
 - Add the shared ONVO cover to the manifest and HTML listing for every supported major version.
@@ -56,11 +65,11 @@ Hosted Odoo 17 demo: https://onvo-odoo.18.207.41.62.sslip.io/shop
 
 AWS Lightsail instance: `onvo-odoo-demo`, us-east-1, small_3_0, USD 12/month. Static IP: `onvo-odoo-demo-ip`. The owner explicitly requested keeping the server on 2026-11-17. It has not been deleted.
 
-The ONVO provider remains disabled while the owner supplies sandbox credentials. The owner registered all four branches and all four Odoo Apps listings were verified public on 2026-11-17. Source updates require a fresh scan of the existing repositories; see ODOO_APPS_UPLOAD.md.
+The ONVO provider is now published in test mode. The owner registered all four branches and all four Odoo Apps listings were verified public on 2026-11-17. Source updates require a fresh scan of the existing repositories; see ODOO_APPS_UPLOAD.md.
 
 ## Before production activation
 
-- Configure dedicated ONVO sandbox credentials and signed webhook endpoint.
+- Sandbox credentials are configured; confirm the ONVO endpoint is active and its dashboard connection test succeeds.
 - Verify an actual complete payment, return, webhook retry and reconciliation.
 - Capture real screenshots for the listing and remove beta wording only after acceptance.
 - Have ONVO issue/recognize the actual referral code. `integration=onvo_odoo` is an attribution identifier, not automatic commission enrollment.

@@ -61,4 +61,4 @@ The owner registered all four branches, and the Odoo 17, 18, 19 and 20 listings 
 
 Release 0.3.0 adds `static/description/cover.png` to each manifest's `images` list and places it at the top of the description. The provider form includes a copyable webhook URL and numbered key/webhook setup instructions. After scanning, verify the new cover and the heading **Two secrets. Three setup steps.** on all four listings.
 
-The hosted demo is retained as requested; ONVO checkout remains disabled until its sandbox credentials are supplied.
+The hosted demo is retained as requested and now has ONVO published in test mode. Release 0.4.0 also updates the checkout badge and provider/app icon. Secrets stay on the server and are not included in releases. Completing a test payment and verifying a delivery from ONVO are still required before removing beta wording.
