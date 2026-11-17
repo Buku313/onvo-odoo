@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_onvo_test_checkout_admin,ONVO checkout test administrator,model_payment_onvo_test_checkout,base.group_system,1,1,1,1

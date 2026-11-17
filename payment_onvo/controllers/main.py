@@ -22,7 +22,12 @@ class OnvoController(http.Controller):
             transaction._onvo_sync()
         except ValidationError:
             pass  # A signed webhook or the reconciliation job can recover later.
-        response = request.redirect('/payment/status', 303)
+        if transaction.onvo_is_setup_test:
+            response = request.render('payment_onvo.test_checkout_return', {
+                'payment_state': transaction.state,
+            })
+        else:
+            response = request.redirect('/payment/status', 303)
         response.headers['Referrer-Policy'] = 'no-referrer'
         response.headers['Cache-Control'] = 'no-store'
         return response

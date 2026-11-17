@@ -1,0 +1,38 @@
+<odoo>
+    <record id="onvo_test_checkout_form" model="ir.ui.view">
+        <field name="name">payment.onvo.test.checkout.form</field>
+        <field name="model">payment.onvo.test.checkout</field>
+        <field name="arch" type="xml">
+            <form string="Test Apple Pay on ONVO">
+                <div class="alert alert-info" role="status">
+                    <strong>Test mode — no real charge.</strong>
+                    Create a link, then open it on an Apple device with a card in Wallet.
+                    Choose Apple Pay on the ONVO payment page.
+                </div>
+                <group>
+                    <field name="provider_id" invisible="1"/>
+                    <field name="transaction_id" invisible="1"/>
+                    <field name="currency" readonly="transaction_id"/>
+                    <field name="checkout_url" string="Copy test link" widget="CopyClipboardChar"
+                           invisible="not checkout_url" readonly="1"/>
+                    <field name="payment_state" invisible="not transaction_id"/>
+                </group>
+                <p invisible="not checkout_url">
+                    On another device? Copy the link to your own iPhone, iPad or Mac.
+                    After paying, choose <strong>Check payment result</strong> below.
+                    <strong>Done</strong> confirms checkout completion; choose Apple Pay during the test to test that wallet.
+                    This setup test does not create a sales order.
+                </p>
+                <footer>
+                    <button name="action_create_link" type="object" string="Create test link" class="btn-primary"
+                            invisible="checkout_url"/>
+                    <button name="action_open_checkout" type="object" string="Open test checkout" class="btn-primary"
+                            invisible="not checkout_url or payment_state in ('done', 'authorized', 'cancel', 'error')"/>
+                    <button name="action_check_result" type="object" string="Check payment result"
+                            invisible="not transaction_id"/>
+                    <button string="Close" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

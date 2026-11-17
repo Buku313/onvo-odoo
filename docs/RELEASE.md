@@ -2,6 +2,16 @@
 
 Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 
+## Apple Pay self-service release 0.5.0 (beta)
+
+- Add an Apple Pay provider tab with ONVO Dashboard activation steps, device troubleshooting and live-mode guidance.
+- Add an administrator-only sandbox wizard for USD 1.00 / CRC 1,000.00 test links. Repeated clicks reuse the test session; the link can be copied to an Apple device.
+- Add a payment-result check through the existing server-side reconciliation. Checkout completion is not presented as proof of wallet identity or Apple Pay activation.
+- Reject live mode, non-administrators, mismatched test transactions and disallowed companies before any test checkout request.
+- Add a token-protected test return page that works without the original shop session or a sales order.
+
+Local Odoo 17 upgrade and all 19 integration tests passed, plus four standalone security tests. The suite covers test totals, reuse, payment-result refresh, live-mode and public-user rejection, transaction binding and cross-device return verification. Full compatibility and deployment evidence follows after release checks.
+
 ## Payment branding release 0.4.0 (beta)
 
 - Use ONVO's current public wordmark in a compact checkout badge and square provider/app icon.
