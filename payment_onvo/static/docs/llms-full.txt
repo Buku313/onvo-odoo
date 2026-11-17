@@ -5,6 +5,8 @@ Publisher: ONVOPay. Support: antonio@onvopay.com. License: LGPL-3.
 Repository: https://github.com/Buku313/onvo-odoo
 This is documentation, not an AI service or an autonomous payment agent. No LLM API key is required. This guide does not certify production readiness or guarantee a payment method is enabled.
 
+First read quickstart.txt in this directory for the six-step checklist. Install/configure website_sale separately for eCommerce; this connector depends only on payment and does not create a store or pricelist.
+
 ## Start here: establish the merchant's environment
 Ask for the Odoo major version, hosting type, company/website, public HTTPS URL, currency (CRC or USD), intended payment methods and desired test/live mode. Inspect existing settings where authorized rather than asking for information already available. Default new setup to test mode. Never infer authorization to charge, refund, change accounts, enable live payments or accept third-party terms.
 Use only the branch/ZIP matching the installed Odoo major version. Requires Python add-on installation: Odoo.sh or self-hosted Community/Enterprise. Odoo Online SaaS cannot install this module. Automated compatibility coverage uses Community containers; do not claim separate Enterprise certification.
