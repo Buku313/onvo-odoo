@@ -2,11 +2,11 @@
 
 Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Free · LGPL-3
 
-One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.4.0` remains a beta until a completed ONVO sandbox payment and an actual ONVO webhook delivery are verified. Real test-session creation has succeeded on the hosted demo. Automated tests mock ONVO's API and do not replace payment acceptance testing.
+One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.5.0` remains a beta until a completed ONVO sandbox payment and an actual ONVO webhook delivery are verified. Real test-session creation has succeeded on the hosted demo. Automated tests mock ONVO's API and do not replace payment acceptance testing.
 
 [Odoo Apps publishing instructions](docs/ODOO_APPS_UPLOAD.md) · [Release record](docs/RELEASE.md)
 
-[Apple Pay rollout plan](docs/APPLE_PAY_PLAN.md) · [Payment branding](docs/BRANDING.md)
+[Apple Pay self-service setup](docs/APPLE_PAY_SETUP.md) · [Apple Pay rollout plan](docs/APPLE_PAY_PLAN.md) · [Payment branding](docs/BRANDING.md)
 
 ## Installation
 
@@ -29,6 +29,12 @@ See [ONVO's signed webhook guide](https://docs.onvopay.com/en/webhooks). Endpoin
 If checkout says no payment option is available, check the provider's mode, publication status, website/company, supported currency and country restrictions, and that its ONVO payment method is active. In test mode, use an authorized test user; Odoo can hide test providers from public visitors.
 
 ONVO's hosted page controls payment methods offered to the merchant. This connector supports one-time automatic capture in CRC and USD. Saved cards, refunds from Odoo, subscriptions, manual capture, POS and payouts are outside this release.
+
+## Apple Pay self-service setup
+
+Open the ONVO provider's **Apple Pay** tab. It links to the ONVO Dashboard activation steps and provides **Create a test checkout** for Settings administrators. Select a test amount, create a link, open it on an Apple device with Wallet, choose Apple Pay, then use **Check payment result** in Odoo. The tool rejects live mode and reuses an existing session within the same test window. No extra publishable key, SDK or Odoo-domain registration is required for this hosted flow.
+
+The owner has activated Apple Pay for the demo's test account. Individual merchants enable it for their own accounts in ONVO. Odoo shows checkout completion, not an independently verified Apple Pay activation status; full device/Wallet acceptance remains a manual test.
 
 ## Data and referral attribution
 

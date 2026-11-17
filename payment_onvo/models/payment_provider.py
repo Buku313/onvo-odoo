@@ -1,6 +1,6 @@
 import requests
 from odoo import _, api, fields, models, release
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 from ..security import SUPPORTED_CURRENCIES
 
 
@@ -66,6 +66,30 @@ class PaymentProvider(models.Model):
 
     def _get_default_payment_method_codes(self):
         return ['onvo'] if self.code == 'onvo' else super()._get_default_payment_method_codes()
+
+    def _onvo_check_self_test_access(self):
+        self.ensure_one()
+        if not self.env.user.has_group('base.group_system'):
+            raise AccessError(_('Only an administrator can create ONVO setup tests.'))
+        if self.company_id not in self.env.companies:
+            raise AccessError(_('Switch to this provider\'s company before testing.'))
+        if self.code != 'onvo' or not self._onvo_enabled() or self._onvo_mode() != 'test':
+            raise ValidationError(_('Enable this ONVO provider in test mode before creating a test link. Live payments cannot be created with this tool.'))
+        self._check_onvo_configuration()
+        if not (self.onvo_secret_key or '').startswith('onvo_test_secret_'):
+            raise ValidationError(_('Configure your ONVO test secret API key first.'))
+
+    def action_onvo_test_checkout(self):
+        self._onvo_check_self_test_access()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Test Apple Pay on ONVO'),
+            'res_model': 'payment.onvo.test.checkout',
+            'view_mode': 'form',
+            'view_id': self.env.ref('payment_onvo.onvo_test_checkout_form').id,
+            'target': 'new',
+            'context': {'default_provider_id': self.id},
+        }
 
     def _get_supported_currencies(self):
         currencies = super()._get_supported_currencies()

@@ -14,6 +14,7 @@ class PaymentTransaction(models.Model):
     _inherit = 'payment.transaction'
 
     onvo_next_sync = fields.Datetime(default=fields.Datetime.now, copy=False, index=True)
+    onvo_is_setup_test = fields.Boolean(readonly=True, copy=False, groups='base.group_system')
     onvo_session_id = fields.Char(copy=False, readonly=True, index=True)
     onvo_checkout_url = fields.Char(copy=False, readonly=True, groups='base.group_system')
     onvo_return_token = fields.Char(copy=False, readonly=True, groups='base.group_system')

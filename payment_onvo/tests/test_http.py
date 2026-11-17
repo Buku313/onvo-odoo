@@ -52,3 +52,24 @@ class TestOnvoHttp(HttpCase):
             self.assertEqual(self.post_event(event).status_code, 200)
         tx.invalidate_recordset()
         self.assertEqual(tx.state, 'done')
+
+    def test_setup_return_works_without_shop_session(self):
+        tx = self.env['payment.transaction'].create({'provider_id':self.provider.id,
+            'payment_method_id':self.env.ref('payment_onvo.payment_method_onvo').id,
+            'reference':'ONVO-SELFTEST-HTTP', 'amount':1, 'currency_id':self.env.ref('base.USD').id,
+            'partner_id':self.env.ref('base.partner_admin').id, 'operation':'online_redirect',
+            'state':'pending', 'onvo_session_id':'cs_setup_http', 'onvo_is_setup_test':True,
+            'onvo_return_token':'setup-http-token'})
+        url = '/payment/onvo/return?tx=%s&token=setup-http-token' % tx.id
+        with patch.object(type(self.provider), '_onvo_request', return_value={
+            'id':'cs_setup_http', 'mode':'test', 'paymentStatus':'unpaid', 'status':'open'}):
+            response = self.url_open(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('not confirmed yet', response.text)
+        with patch.object(type(self.provider), '_onvo_request', return_value={
+            'id':'cs_setup_http', 'mode':'test', 'paymentStatus':'paid', 'status':'complete',
+            'amountTotal':100, 'currency':'USD', 'paymentIntentId':'pi_setup_http'}):
+            response = self.url_open(url)
+        self.assertIn('Your test payment is confirmed.', response.text)
+        self.assertEqual(response.headers['Cache-Control'], 'no-store')
+        self.assertEqual(self.url_open(url.replace('setup-http-token', 'forged')).status_code, 403)

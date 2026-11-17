@@ -23,6 +23,10 @@
 <p>The webhook signing secret is different from the API key. Use ONVO's signed webhook format. If needed, retrieve it with <strong>Reveal signing secret</strong> in the endpoint's detail page.</p>
 <p>For live payments, replace both secrets with live-mode credentials and switch Odoo to live mode in the same save. Repeat ONVO's connection test. An optional ONVO-issued referral code can be added separately.</p>
 </div>
+<h2>Apple Pay setup for self-service merchants</h2>
+<p>The provider's <strong>Apple Pay</strong> tab guides you through ONVO activation, testing and the move to live mode. Hosted checkout uses your existing credentials and webhook. No extra SDK or Odoo-domain registration is needed.</p>
+<ol><li>Enable card payments and Apple Pay in your ONVO account's matching mode.</li><li>In Odoo test mode, choose <strong>Create a test checkout</strong> and select USD 1.00 or CRC 1,000.00.</li><li>Open or copy the test link to an Apple device with Wallet, select Apple Pay, then choose <strong>Check payment result</strong> in Odoo.</li></ol>
+<p>The setup tool is restricted to Settings administrators and sandbox payments. Apple Pay availability depends on ONVO account activation, merchant eligibility, mode and device. Odoo reports checkout completion; activation status remains in the ONVO Dashboard.</p>
 <h2>External service and data transfer</h2>
 <p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
 <h2>Scope of this release</h2>

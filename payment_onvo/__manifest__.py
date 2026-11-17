@@ -1,6 +1,6 @@
 {
     'name': 'ONVO Checkout',
-    'version': '20.0.0.4.0',
+    'version': '20.0.0.5.0',
     'category': 'Accounting/Payment Providers',
     'summary': 'ONVO hosted checkout with verified payment reconciliation',
     'description': 'Accept payments using ONVO hosted Checkout. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',
@@ -9,7 +9,7 @@
     'license': 'LGPL-3',
     'images': ['static/description/cover.png'],
     'depends': ['payment'],
-    'data': ['views/payment_templates.xml', 'views/payment_provider_views.xml', 'data/payment_provider_data.xml', 'data/ir_cron.xml'],
+    'data': ['security/ir.model.access.csv', 'wizard/test_checkout_views.xml', 'views/payment_templates.xml', 'views/payment_provider_views.xml', 'data/payment_provider_data.xml', 'data/ir_cron.xml'],
     'post_init_hook': 'post_init_hook',
     'uninstall_hook': 'uninstall_hook',
     'installable': True,
