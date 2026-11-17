@@ -1,4 +1,4 @@
-from . import controllers, models
+from . import controllers, models, wizard
 from odoo.addons.payment import setup_provider, reset_payment_provider
 
 

@@ -1,1 +1,27 @@
-<odoo><template id="redirect_form"><form t-att-action="api_url" method="get"/></template></odoo>
+<odoo>
+    <template id="redirect_form"><form t-att-action="api_url" method="get"/></template>
+    <template id="test_checkout_return" name="ONVO setup test result">
+        <html lang="en">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>ONVO test checkout</title>
+                <style>
+                    body { margin:0; padding:48px 20px; background:#e6f7ed; color:#153b32; font-family:system-ui,sans-serif; line-height:1.6; }
+                    main { max-width:640px; margin:0 auto; padding:32px; background:white; border-radius:16px; }
+                    h1 { margin-top:0; line-height:1.2; }
+                    .alert { padding:16px; border-radius:8px; background:#f1f5f9; }
+                    .alert-success { background:#dcfce7; }
+                </style>
+            </head>
+            <body><main>
+                <h1>ONVO test checkout</h1>
+                <p t-if="payment_state == 'done'" class="alert alert-success">Your test payment is confirmed.</p>
+                <p t-elif="payment_state in ('cancel', 'error')" class="alert alert-info">This test payment was not completed.</p>
+                <p t-else="" class="alert alert-info">Your test payment is not confirmed yet.</p>
+                <p>Return to Odoo's Apple Pay setup window and choose <strong>Check payment result</strong>.</p>
+                <p>This is a sandbox setup test. No sales order was created.</p>
+            </main></body>
+        </html>
+    </template>
+</odoo>
