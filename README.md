@@ -2,9 +2,11 @@
 
 Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Free · LGPL-3
 
-One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.3.0` remains a beta until an actual ONVO sandbox checkout and signed webhook delivery are verified. Automated tests mock ONVO's API and do not replace that acceptance test.
+One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.4.0` remains a beta until a completed ONVO sandbox payment and an actual ONVO webhook delivery are verified. Real test-session creation has succeeded on the hosted demo. Automated tests mock ONVO's API and do not replace payment acceptance testing.
 
 [Odoo Apps publishing instructions](docs/ODOO_APPS_UPLOAD.md) · [Release record](docs/RELEASE.md)
+
+[Apple Pay rollout plan](docs/APPLE_PAY_PLAN.md) · [Payment branding](docs/BRANDING.md)
 
 ## Installation
 
@@ -24,7 +26,7 @@ Targets are Community and Enterprise installations that allow Python add-ons, in
 
 See [ONVO's signed webhook guide](https://docs.onvopay.com/en/webhooks). Endpoint creation is done in the Dashboard; ONVO does not expose it through API keys. The previous `X-Webhook-Secret` format is not supported.
 
-If checkout says no payment option is available, check the provider's mode, publication status, website/company, supported currency and country restrictions, and that its ONVO payment method is active. In test mode, use an authorized test user; Odoo can hide test providers from public visitors. The hosted demo deliberately keeps ONVO disabled until its sandbox credentials are supplied.
+If checkout says no payment option is available, check the provider's mode, publication status, website/company, supported currency and country restrictions, and that its ONVO payment method is active. In test mode, use an authorized test user; Odoo can hide test providers from public visitors.
 
 ONVO's hosted page controls payment methods offered to the merchant. This connector supports one-time automatic capture in CRC and USD. Saved cards, refunds from Odoo, subscriptions, manual capture, POS and payouts are outside this release.
 
@@ -57,6 +59,6 @@ Odoo 20 needs PostgreSQL 16 or newer; the test uses an isolated Compose project 
 
 https://onvo-odoo.18.207.41.62.sslip.io/shop
 
-The existing Odoo 17 demo is retained at the owner's request. It costs USD 12/month on AWS Lightsail. Its ONVO payment provider remains disabled until the owner supplies sandbox credentials. The demo is not a production store.
+The existing Odoo 17 demo is retained at the owner's request. It costs USD 12/month on AWS Lightsail. Its ONVO provider is published in test mode with credentials stored only on the server. Real test-session creation and a locally signed webhook probe have passed; completing a payment and confirming delivery from ONVO remain acceptance tasks. The demo is not a production store.
 
 Secrets and local deployment records are excluded from Git. The server administrator login is not published in this repository.
