@@ -21,6 +21,14 @@ One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 2
 
 Planned B2B expansion: [payment model](docs/B2B_PAYMENT_MODEL.md), [comprehensive payment-term catalog](docs/B2B_TERMS_CATALOG.md), and [implementation/acceptance plan](docs/B2B_IMPLEMENTATION_PLAN.md). These describe future quote/invoice collection features; they are not claims of functionality in the current connector.
 
+## AI-assisted setup / Configuración con IA
+
+Includes an [LLM documentation index](llms.txt) and a [complete plain-text setup guide](payment_onvo/static/docs/llms-full.txt) for your preferred AI assistant. The guide ships inside the add-on: version-specific fields, secure credentials, webhook verification, wallet/SINPE requirements, troubleshooting and test-to-live handoff. No LLM API key or AI subscription is required by the module; use of an external assistant is optional.
+
+Copy this prompt with the guide: **“Help configure payment_onvo for my Odoo version in test mode. Keep credentials in approved secret storage, verify actual outcomes, and ask before live activation or real charges.”**
+
+After installation, the guide can be served from `/payment_onvo/static/docs/llms-full.txt` on your own Odoo host. It contains no merchant credentials. Documentation helps an assistant follow the process; it does not automatically configure your account or replace acceptance testing.
+
 ## Installation
 
 Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Payments - Cards, Apple Pay, Google Pay & SINPE Móvil**. Do not install all four packages together.
