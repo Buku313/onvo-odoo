@@ -31,6 +31,16 @@ def build(version, destination):
         text = text.replace('</record>', '<field name="numbercall">-1</field>\n</record>')
     cron.write_text(text)
     if version >= 20:
+        # Odoo 20 combines access grants and record rules in ir.access.
+        old_access = target / 'security/ir.model.access.csv'
+        if old_access.exists():
+            old_access.unlink()
+        (target / 'security/ir.access.csv').write_text(
+            'id,name,model_id,group_id/id,operation,domain\n'
+            'access_onvo_test_checkout_admin,ONVO setup test administrator,payment.onvo.test.checkout,base.group_system,crud,\n'
+            'onvo_test_checkout_owner,Own ONVO setup tests,payment.onvo.test.checkout,,crud,"[(\'create_uid\', \'=\', user.id)]"\n')
+        manifest_path.write_text(manifest_path.read_text().replace(
+            'security/ir.model.access.csv', 'security/ir.access.csv'))
         provider_data = target / 'data/payment_provider_data.xml'
         provider_data.write_text('''<odoo noupdate="1">
 <record id="payment_provider_onvo" model="payment.provider">
