@@ -22,7 +22,7 @@ def build(version, destination):
     manifest_path = target / '__manifest__.py'
     manifest = ast.literal_eval(manifest_path.read_text())
     old_version = manifest['version']
-    version_string = f'{version}.0.0.2.0'
+    version_string = f'{version}.' + old_version.split('.', 1)[1]
     manifest_path.write_text(manifest_path.read_text().replace(old_version, version_string))
     (target / 'const.py').write_text(f'INTEGRATION_VERSION = {version_string!r}\n')
     cron = target / 'data/ir_cron.xml'
@@ -46,11 +46,16 @@ def build(version, destination):
 </odoo>
 ''')
         view = target / 'views/payment_provider_views.xml'
-        view.write_text(view.read_text().replace("state != 'disabled'", "(is_live or is_published)"))
+        view.write_text(view.read_text()
+            .replace("state != 'disabled'", "(is_live or is_published)")
+            .replace('Choose Test Mode at the top of this form.',
+                     'Leave Live off at the top of this form and keep the provider active.'))
     migration_root = target / 'migrations'
     for migration in list(migration_root.iterdir()):
         if migration.is_dir():
-            migration.rename(migration_root / version_string) if migration.name != version_string else None
+            matching_name = f'{version}.' + migration.name.split('.', 1)[1]
+            if migration.name != matching_name:
+                migration.rename(migration_root / matching_name)
     description = target / 'static/description/index.html'
     import re
     text = re.sub(r'Odoo (?:17|18|19|20)(?!\d)', f'Odoo {version}', description.read_text())
