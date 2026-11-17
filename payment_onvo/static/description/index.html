@@ -2,7 +2,9 @@
 <img src="cover.png" class="img-fluid w-100" alt="ONVO Checkout — Payments for Odoo, USD and CRC"/>
 <div class="text-center" style="padding:24px;background-color:#e6f7ed;border-radius:20px;">
 <p style="font-size:16px;color:#226349;">ONVOPay · Odoo 20</p>
-<p>Hosted checkout. Signed webhooks. Verified payment updates.</p>
+<h1>ONVO Payments for Odoo: Checkout &amp; Apple Pay</h1>
+<p>Free ONVOPay payment gateway for Odoo eCommerce in Costa Rica. Accept one-time payments in CRC and USD through ONVO hosted checkout.</p>
+<p>Card payments and Apple Pay depend on your ONVO account eligibility and enabled methods. Apple Pay also requires a compatible device and Wallet.</p>
 <p><strong>Beta release · Test mode recommended</strong></p>
 </div>
 <div class="row" style="margin-top:32px;">
@@ -31,5 +33,12 @@
 <p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
 <h2>Scope of this release</h2>
 <p>One-time hosted payments, signed Checkout webhooks, return verification and scheduled reconciliation of pending payments. This release does not implement saved cards, recurring billing, refunds from Odoo, manual capture, payouts or POS. Existing payment_onvopaycard transactions and tokens are not migrated automatically. Odoo Online SaaS cannot install this Python add-on.</p>
+<h2>Pasarela de pagos ONVO para Odoo en Costa Rica</h2>
+<p>Conectá tu tienda Odoo con ONVOPay para cobrar en colones (CRC) y dólares (USD). El módulo es gratuito; las comisiones de procesamiento de ONVO se cobran por separado. Tus clientes pagan en el Checkout hospedado de ONVO.</p>
+<p>Configurá la llave API secreta y el secreto de firma del webhook desde Odoo. Para Apple Pay, activá tu cuenta y habilitá tarjetas y Apple Pay en el modo correspondiente de ONVO. La disponibilidad también depende del dispositivo y de Wallet.</p>
+<h2>Frequently asked questions</h2>
+<h3>Which Odoo versions can I install?</h3><p>Separate builds are available for Odoo 17, 18, 19 and 20. Install the build matching your version on Odoo.sh or a self-hosted installation that permits Python add-ons. Odoo Online SaaS is not supported.</p>
+<h3>Does Apple Pay require an Odoo domain verification file?</h3><p>This connector redirects buyers to ONVO hosted checkout. ONVO handles its checkout domain registration. Embedded Apple Pay on your own domain is a different integration and is not included.</p>
+<h3>Can I test before accepting real payments?</h3><p>Yes. Use matching ONVO test credentials and a test-mode webhook. Live payments require replacing both secrets and switching the provider to live mode.</p>
 <h2>Support</h2><p><a href="mailto:antonio@onvopay.com">antonio@onvopay.com</a></p>
 </section>
