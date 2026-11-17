@@ -11,7 +11,16 @@ Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 - Keep unsaved providers from presenting invalid webhook URLs; retain the correct URL while editing a saved provider.
 - Derive package versions from the manifest and retain each migration's original release suffix when building other Odoo versions.
 
-Local Odoo 17 installation and all 13 integration tests passed, along with four standalone security tests. Full four-version CI validation is recorded below when complete. API responses are mocked; live ONVO sandbox acceptance still needs the owner's test credentials.
+Local Odoo 17 installation and all 13 integration tests passed, along with four standalone security tests. The common source and each marketplace branch passed GitHub Actions on the corresponding official Odoo images. API responses are mocked; real ONVO sandbox acceptance still needs the owner's test credentials.
+
+| Odoo | Version | Tested source | Successful CI run |
+| --- | --- | --- | --- |
+| 17 | 17.0.0.3.0 | `72edf54` | https://github.com/Buku313/onvo-odoo/actions/runs/44136506036 (all four versions) |
+| 18 | 18.0.0.3.0 | `6028eb2` | https://github.com/Buku313/onvo-odoo/actions/runs/44136506371 |
+| 19 | 19.0.0.3.0 | `dc91905` | https://github.com/Buku313/onvo-odoo/actions/runs/44136508563 |
+| 20 | 20.0.0.3.0 | `d7fd03e` | https://github.com/Buku313/onvo-odoo/actions/runs/44136506288 |
+
+The retained Odoo 17 demo was upgraded successfully to 17.0.0.3.0 with a source backup. Its ONVO provider remains disabled awaiting sandbox credentials. All four source branches include the cover and new description. Refresh them with **Scan** in Odoo Apps **My Repos**; the browser's automatic approval review failed before access to those controls, so the scans were not triggered by this release workflow.
 
 ## Compatibility release 0.2.0 (beta)
 
