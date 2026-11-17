@@ -1,12 +1,15 @@
 """Demo-only presentation; run using Odoo shell on onvo_demo."""
 assert env.cr.dbname == 'onvo_demo', 'This script is only for the demo database'
 views = [
- ('onvo_demo.sandbox_banner', 'ONVO demo sandbox notice', 'website.layout', '''
+ ('onvo_demo.sandbox_banner', 'ONVO demo payment mode notice', 'website.layout', '''
 <xpath expr="//main" position="before">
   <div class="alert alert-info mb-0 rounded-0 text-center" role="status">
-    <strong>ONVO sandbox demo</strong> — No real charges.
+    <t t-if="request.env.ref('payment_onvo.payment_provider_onvo').sudo().state == 'enabled'">
+      <strong>LIVE payment testing</strong> — Payments charge real money. Test product: USD 1.00 per unit.
+    </t>
+    <t t-else=""><strong>ONVO sandbox demo</strong> — No real charges.</t>
     <span t-if="request.env.ref('payment_onvo.payment_provider_onvo').sudo().state == 'disabled'">
-      Test checkout is awaiting account setup. You can browse the demo store now.
+      Checkout is awaiting account setup. You can browse the demo store now.
     </span>
   </div>
 </xpath>'''),
@@ -15,12 +18,12 @@ views = [
   <div t-else="" class="alert alert-info mt-4" role="status">
     <t t-set="hide_payment_button" t-value="True"/>
     <t t-if="request.env.ref('payment_onvo.payment_provider_onvo').sudo().state == 'disabled'">
-      <strong>ONVO test checkout is not active yet.</strong>
-      <p class="mb-0">This demo is waiting for its ONVO sandbox account setup. Your order has not been charged. You can continue browsing and return when test payments are enabled.</p>
+      <strong>ONVO checkout is not active yet.</strong>
+      <p class="mb-0">This demo is waiting for its ONVO account setup. Your order has not been charged. You can continue browsing and return when payments are enabled.</p>
     </t>
     <t t-else="">
       <strong>No payment method is available for this order.</strong>
-      <p class="mb-0">Contact antonio@onvopay.com for help with this sandbox demo.</p>
+      <p class="mb-0">Contact antonio@onvopay.com for help with this demo.</p>
     </t>
   </div>
 </xpath>'''),
@@ -31,4 +34,4 @@ for key, name, parent, arch in views:
  if view: view.write(values)
  else: env['ir.ui.view'].create(values)
 env.cr.commit()
-print('Sandbox banner and checkout setup message installed.')
+print('Payment mode banner and checkout setup message installed.')
