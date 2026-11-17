@@ -1,0 +1,43 @@
+# ONVO for Odoo: developer quick start
+
+Use this as the setup checklist. For full troubleshooting and agent instructions, read llms-full.txt in this directory.
+
+1. Choose the right package
+Odoo 17 → branch 17.0; 18 → 18.0; 19 → 19.0; 20 → 20.0.
+Requires Odoo.sh or self-hosting with Python add-ons. Odoo Online SaaS is not supported.
+Install technical module payment_onvo. For a store, install/configure Odoo Website and eCommerce (website_sale) separately; payment_onvo depends only on payment and does not create a store, products, currencies or pricelists.
+
+2. Make the site ready
+Use a public HTTPS hostname. Confirm reverse-proxy headers and Odoo's trusted proxy configuration match your deployment. Configure the correct website/company and base URL; do not copy the shared demo hostname or provider ID.
+For a USD/CRC store, activate the required currency and select a matching website pricelist. Verify the cart's final currency, taxes, shipping and quantity. SINPE Móvil needs CRC.
+
+3. Configure the provider
+Open Accounting or Website → Configuration → Payment Providers → ONVO (menu names vary with installed apps/access). If missing, confirm payment_onvo is installed and use an administrator in the correct company.
+Keep the provider disabled while preparing credentials. On Odoo 20, do not archive the provider; leave Live off and publication off until ready.
+Enter the ONVO TEST secret API key, then copy the generated Webhook URL. The preinstalled provider is already saved; if creating another provider, save it before copying the URL.
+In the SAME ONVO account's TEST mode, create a webhook with that URL and event checkout_session.succeeded. Paste its whsec_ signing secret into Odoo. Never substitute a publishable key or an API key for the webhook secret.
+Review the payment-data consent checkbox with the merchant.
+Save BOTH secrets, consent and mode together:
+- Odoo 17–19: Test Mode (state=test).
+- Odoo 20: Live off (is_live=False), provider active.
+Publish when ready. Confirm the ONVO payment method is active. Test providers may be hidden from public customers; use an authorized Odoo user.
+
+4. Check the connection
+Send Test connection from the ONVO webhook dashboard. Expect a successful response.
+If it fails: check public HTTPS, provider enabled, endpoint signing secret, account/mode and server clock. Do not disable signature validation.
+A successful connection test is not a completed payment.
+
+5. Make a sandbox payment
+Provider → Apple Pay tab → Create a test checkout. This is a general hosted test link despite the tab name. Choose USD 1.00 or CRC 1,000.00. No sales order is created by this tool.
+Complete the payment on ONVO, then Check payment result in Odoo. Expect Done.
+For Apple Pay: account activated, cards + Apple Pay on in the same mode, compatible device and Wallet. For Google Pay: cards + Google Pay on, supported buyer card/device. For SINPE Móvil: CRC and method enabled; follow ONVO instructions.
+Then separately test a normal website order: add a product → checkout → select ONVO → pay on ONVO → verify the order and linked payment transaction. This validates the store flow that the setup wizard does not exercise.
+Record an actual ONVO webhook delivery and the reconciled transaction. Check cancellation and delayed/duplicate notifications before merchant rollout.
+
+6. Switch to live only when requested
+Resolve or record outstanding test sessions first. Replacing credentials can prevent old sessions from reconciling; the module does not retain historical per-session credentials. Do not cancel completed payments or invent reconciliation results.
+Create a LIVE webhook in the intended activated ONVO account. Replace API key and webhook secret together, then choose Enabled (17–19) or Live on (20). Keep deliberate publication settings.
+Remove no-real-charges notices. Confirm the final amount before any explicitly authorized real test. The setup wizard intentionally refuses live mode.
+Verify live webhook delivery, completed payment and Odoo reconciliation separately.
+
+Done means: correct installed version, intended company/website, generated HTTPS webhook, matching account/mode credentials, actual signed delivery, completed payment, and correct Odoo transaction/order outcome. Report anything not yet tested.

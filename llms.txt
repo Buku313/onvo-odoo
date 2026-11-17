@@ -3,9 +3,10 @@
 > Free ONVOPay hosted payment connector for Odoo 17–20: cards, Apple Pay, Google Pay and SINPE Móvil subject to merchant eligibility. AI-readable setup documentation; no AI service or LLM key required.
 
 ## Setup
-- [Complete AI setup reference](https://raw.githubusercontent.com/Buku313/onvo-odoo/17.0/payment_onvo/static/docs/llms-full.txt): version-specific installation, credentials, consent, webhooks, payment methods, verification, troubleshooting and live transition.
+- [Developer quick start](https://raw.githubusercontent.com/Buku313/onvo-odoo/19.0/payment_onvo/static/docs/quickstart.txt): six steps with success checks and hosting prerequisites.
+- [Complete AI setup reference](https://raw.githubusercontent.com/Buku313/onvo-odoo/19.0/payment_onvo/static/docs/llms-full.txt): version-specific installation, credentials, consent, webhooks, payment methods, verification, troubleshooting and live transition.
 - [README](https://github.com/Buku313/onvo-odoo#readme): installation links for all supported versions and scope.
-- [Apple Pay guide](https://github.com/Buku313/onvo-odoo/blob/17.0/docs/APPLE_PAY_SETUP.md): hosted wallet setup.
+- [Apple Pay guide](https://github.com/Buku313/onvo-odoo/blob/19.0/docs/APPLE_PAY_SETUP.md): hosted wallet setup.
 
 ## Version selection
 Choose the branch matching the installed Odoo major version: 17.0, 18.0, 19.0 or 20.0. Each branch includes this index and payment_onvo/static/docs/llms-full.txt. Prefer an immutable commit URL when reproducibility is required.

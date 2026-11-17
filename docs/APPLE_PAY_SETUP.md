@@ -35,5 +35,5 @@ Source: [ONVO's Apple Pay guide](https://docs.onvopay.com/en/payments/apple-pay)
 - Only Odoo Settings administrators can use the setup wizard. It respects the current allowed companies and does not elevate access.
 - The API secret stays server-side. Links use the existing ONVO-hosted checkout URL validation and signed return flow.
 - Repeated clicks within one test reuse its session. Checking the result performs the existing read-only session reconciliation.
-- The public availability API is documented for an embedded button's domain. This hosted flow does not interpret that endpoint as merchant activation status or add an unverified local activation toggle.
+- For optional diagnosis, use ONVO's availability endpoint with the same account/mode publishable key and `domainName=checkout.onvopay.com`. A successful result indicates server-side availability, not device readiness or a completed payment. The connector itself does not fetch or display that status. Do not register ONVO's hosted domain as your own.
 - This release provides setup guidance and a test workflow. It does not add an embedded SDK or independently attest to Apple Pay activation or device compatibility.

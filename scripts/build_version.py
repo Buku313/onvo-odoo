@@ -69,7 +69,7 @@ def build(version, destination):
                 migration.rename(migration_root / matching_name)
     description = target / 'static/description/index.html'
     import re
-    text = re.sub(r'Odoo (?:17|18|19|20)(?!\d)', f'Odoo {version}', description.read_text())
+    text = re.sub(r'Odoo (?:17|18|19|20)(?![\d,–-])', f'Odoo {version}', description.read_text())
     description.write_text(text)
     return target, version_string
 
