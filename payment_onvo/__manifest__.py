@@ -1,9 +1,10 @@
 {
-    'name': 'ONVO Checkout',
+    'name': 'ONVO Payments - Checkout & Apple Pay',
     'version': '18.0.0.5.0',
     'category': 'Accounting/Payment Providers',
-    'summary': 'ONVO hosted checkout with verified payment reconciliation',
-    'description': 'Accept payments using ONVO hosted Checkout. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',
+    'summary': 'ONVOPay payment gateway for Costa Rica: cards, Apple Pay, CRC and USD',
+    'description': 'ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica. Accept one-time card payments and Apple Pay through ONVO hosted Checkout, subject to account activation, payment-method eligibility and device support. Supports CRC and USD. Pasarela de pagos para Odoo: cobros con tarjeta y Apple Pay en colones y dolares mediante Checkout hospedado de ONVO. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',
+    'website': 'https://github.com/Buku313/onvo-odoo',
     'author': 'ONVOPay',
     'support': 'antonio@onvopay.com',
     'license': 'LGPL-3',
