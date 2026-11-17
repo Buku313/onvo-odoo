@@ -66,6 +66,9 @@ class PaymentTransaction(models.Model):
 
     def _onvo_sync(self):
         self.ensure_one()
+        # Reconciliation only performs a remote GET. Its local writes can safely
+        # roll back and be replayed, as required by Odoo 20's payment write guard.
+        self = self.with_context(payment_safe_write=True)
         self._onvo_lock()
         if (self.provider_code != 'onvo' or not self.onvo_session_id or self.state == 'done'
                 or not self.provider_id._onvo_enabled()):
@@ -90,7 +93,7 @@ class PaymentTransaction(models.Model):
         transactions = self.search([('provider_code', '=', 'onvo'), ('state', '=', 'pending'),
             ('onvo_session_id', '!=', False),
             ('onvo_next_sync', '<=', fields.Datetime.now())] + provider_domain, limit=50, order='onvo_next_sync, id')
-        for tx in transactions:
+        for tx in transactions.with_context(payment_safe_write=True):
             tx.onvo_next_sync = fields.Datetime.now() + timedelta(minutes=5)
             try:
                 with self.env.cr.savepoint():

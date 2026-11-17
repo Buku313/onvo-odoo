@@ -28,9 +28,9 @@ class TestOnvo(TransactionCase):
         tx = self.make_tx()
         with patch.object(type(self.provider), '_onvo_request', return_value={
             'id':'cs_test', 'url':'https://checkout.onvopay.com/pay/cs_test'}) as api:
-            result = tx._get_specific_rendering_values({})
+            result = tx._get_processing_values()
             self.assertEqual(tx.state, 'pending')
-            self.assertEqual(result['api_url'], 'https://checkout.onvopay.com/pay/cs_test')
+            self.assertIn('https://checkout.onvopay.com/pay/cs_test', result['redirect_form_html'])
             self.assertEqual(api.call_args.args[1]['lineItems'][0]['unitAmount'], 2500)
             self.assertEqual(api.call_args.args[1]['metadata']['integration_version'], INTEGRATION_VERSION)
             values = tx._get_processing_values()
@@ -39,7 +39,7 @@ class TestOnvo(TransactionCase):
 
     def test_reconciliation_and_duplicate(self):
         tx = self.make_tx()
-        tx.write({'onvo_session_id':'cs_test', 'state':'pending'})
+        tx.with_context(payment_safe_write=True).write({'onvo_session_id':'cs_test', 'state':'pending'})
         response = {'id':'cs_test', 'mode':'test', 'paymentStatus':'paid', 'status':'complete',
                     'amountTotal':2500, 'currency':'USD', 'paymentIntentId':'pi_test'}
         with patch.object(type(self.provider), '_onvo_request', return_value=response) as api:
@@ -51,7 +51,7 @@ class TestOnvo(TransactionCase):
 
     def test_mismatch_never_marks_paid(self):
         tx = self.make_tx()
-        tx.write({'onvo_session_id':'cs_test', 'state':'pending'})
+        tx.with_context(payment_safe_write=True).write({'onvo_session_id':'cs_test', 'state':'pending'})
         response = {'id':'cs_test', 'mode':'test', 'paymentStatus':'paid', 'status':'complete',
                     'amountTotal':1, 'currency':'USD', 'paymentIntentId':'pi_test'}
         with patch.object(type(self.provider), '_onvo_request', return_value=response):
@@ -64,7 +64,7 @@ class TestOnvo(TransactionCase):
 
     def test_session_uniqueness_is_enforced(self):
         tx = self.make_tx()
-        tx.onvo_session_id = 'cs_unique'
+        tx.with_context(payment_safe_write=True).write({'onvo_session_id': 'cs_unique'})
         self.env.flush_all()
         with self.assertRaises(IntegrityError), mute_logger('odoo.sql_db'), self.env.cr.savepoint():
             other = tx.copy({'reference': 'ONVO-OTHER', 'onvo_session_id': 'cs_unique'})
@@ -74,3 +74,12 @@ class TestOnvo(TransactionCase):
         self.assertIn(self.method, self.provider.payment_method_ids)
         self.assertEqual(self.provider.redirect_form_view_id, self.env.ref('payment_onvo.redirect_form'))
         self.assertTrue(self.env.ref('payment_onvo.ir_cron_onvo_sync').active)
+
+    def test_scheduled_reconciliation(self):
+        tx = self.make_tx()
+        tx.with_context(payment_safe_write=True).write({'onvo_session_id': 'cs_cron', 'state': 'pending'})
+        response = {'id': 'cs_cron', 'mode': 'test', 'paymentStatus': 'paid', 'status': 'complete',
+                    'amountTotal': 2500, 'currency': 'USD', 'paymentIntentId': 'pi_cron'}
+        with patch.object(type(self.provider), '_onvo_request', return_value=response):
+            self.env['payment.transaction']._cron_onvo_sync()
+        self.assertEqual(tx.state, 'done')
