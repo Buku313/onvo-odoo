@@ -3,8 +3,8 @@
 <field name="inherit_id" ref="payment.payment_provider_form"/>
 <field name="arch" type="xml"><xpath expr="//group[@name='provider_credentials']" position="inside">
 <group invisible="code != 'onvo'" groups="base.group_system">
-<field name="onvo_secret_key" password="True" required="code == 'onvo' and state != 'disabled'"/>
-<field name="onvo_webhook_secret" password="True" required="code == 'onvo' and state != 'disabled'"/>
+<field name="onvo_secret_key" password="True" required="code == 'onvo' and (is_live or is_published)"/>
+<field name="onvo_webhook_secret" password="True" required="code == 'onvo' and (is_live or is_published)"/>
 <field name="onvo_webhook_url" widget="url"/>
 <field name="onvo_referral_code"/>
 <field name="onvo_data_consent"/>
