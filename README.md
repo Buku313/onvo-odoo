@@ -8,6 +8,8 @@ One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 2
 
 [Apple Pay self-service setup](docs/APPLE_PAY_SETUP.md) · [Apple Pay rollout plan](docs/APPLE_PAY_PLAN.md) · [Payment branding](docs/BRANDING.md)
 
+Planned B2B expansion: [payment model](docs/B2B_PAYMENT_MODEL.md), [comprehensive payment-term catalog](docs/B2B_TERMS_CATALOG.md), and [implementation/acceptance plan](docs/B2B_IMPLEMENTATION_PLAN.md). These describe future quote/invoice collection features; they are not claims of functionality in the current connector.
+
 ## Installation
 
 Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Do not install all four packages together.

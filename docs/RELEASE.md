@@ -10,7 +10,18 @@ Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 - Reject live mode, non-administrators, mismatched test transactions and disallowed companies before any test checkout request.
 - Add a token-protected test return page that works without the original shop session or a sales order.
 
-Local Odoo 17 upgrade and all 19 integration tests passed, plus four standalone security tests. The suite covers test totals, reuse, payment-result refresh, live-mode and public-user rejection, transaction binding and cross-device return verification. Full compatibility and deployment evidence follows after release checks.
+Local Odoo 17 upgrade and all 19 integration tests passed, plus four standalone security tests. The suite covers test totals, reuse, payment-result refresh, live-mode and public-user rejection, transaction binding and cross-device return verification. Odoo 20 uses its new `ir.access` format with an administrator grant and an owner-only record rule for the transient wizard.
+
+| Odoo | Tested commit | Successful CI run |
+| --- | --- | --- |
+| 17 | `a797952` | https://github.com/Buku313/onvo-odoo/actions/runs/44157735898 (all four versions) |
+| 18 | `efae2ac` | https://github.com/Buku313/onvo-odoo/actions/runs/44157736285 |
+| 19 | `755573f` | https://github.com/Buku313/onvo-odoo/actions/runs/44157736696 |
+| 20 | `2710b8a` | https://github.com/Buku313/onvo-odoo/actions/runs/44157736228 |
+
+The comprehensive B2B document-payment model, terms catalog and implementation plan are proposals. They cover merchant/customer-configurable deposits and terms; no B2B policies, customer invoices or outbound messages were activated by the planning work.
+
+The retained Odoo 17 demo was upgraded to 17.0.0.5.0 after all compatibility runs passed. Its administrator test wizard created an actual ONVO sandbox session, reused it on a repeated action, rendered a token-protected return page with HTTP 200 without a shop session, and refreshed the state after the session was expired. The provider remained published in test mode. No card/Wallet charge was submitted; full Apple Pay acceptance still requires a merchant/device test.
 
 ## Payment branding release 0.4.0 (beta)
 
