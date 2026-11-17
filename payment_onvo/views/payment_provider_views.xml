@@ -73,6 +73,57 @@
                     </group>
                 </group>
             </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Apple Pay" name="onvo_apple_pay" invisible="code != 'onvo'" groups="base.group_system">
+                    <div class="alert alert-info" role="status">
+                        <strong>Apple Pay works on your ONVO payment page.</strong>
+                        Use your existing ONVO credentials and webhook. No extra key, plugin or Odoo domain registration is needed for hosted checkout.
+                    </div>
+                    <group>
+                        <group string="1. Activate in ONVO" colspan="2">
+                            <div colspan="2">
+                                <p>Open <strong>Settings → Payment methods</strong> in ONVO. Select <strong>test mode</strong>,
+                                    enable card payments, then enable <strong>Apple Pay</strong>.</p>
+                                <p>Your ONVO account must be activated. Review the merchant terms when prompted
+                                    and wait for ONVO's Apple registration status to finish.</p>
+                                <a href="https://onvopay.com/signin" target="_blank" rel="noopener noreferrer"
+                                   class="btn btn-secondary">Open ONVO Dashboard</a>
+                            </div>
+                        </group>
+                        <group string="2. Try a test payment" colspan="2">
+                            <div colspan="2">
+                                <p>Choose Test Mode at the top of this form. Save your settings, then create a test link below.
+                                    Open it on an Apple device with a card in Wallet and choose <strong>Apple Pay</strong>.</p>
+                                <p>You can copy the link to your own iPhone, iPad or Mac. After paying,
+                                    use <strong>Check payment result</strong> in the test window and look for <strong>Done</strong>.</p>
+                                <button name="action_onvo_test_checkout" type="object" string="Create a test checkout"
+                                        class="btn-primary"/>
+                            </div>
+                        </group>
+                        <group string="3. Go live when ready" colspan="2">
+                            <div colspan="2">
+                                <p>Apple Pay is enabled separately in ONVO's live mode. Enable it there when ready,
+                                    then update Odoo with your live API key and live webhook signing secret and switch the provider to live mode.</p>
+                                <p>Confirm the live webhook connection and payment flow before accepting customer orders.
+                                    The test-link tool only creates sandbox checkouts.</p>
+                            </div>
+                        </group>
+                        <group string="Apple Pay button not showing?" colspan="2">
+                            <div colspan="2">
+                                <ul>
+                                    <li>Look on the <strong>ONVO payment page</strong> after leaving Odoo.</li>
+                                    <li>Use a compatible Apple device with a supported card in Wallet. Try Safari or Chrome on that device.</li>
+                                    <li>Check that ONVO's account activation and Apple registration are complete, and both card payments and Apple Pay are on in the matching mode.</li>
+                                    <li>Test in USD or CRC with an eligible Costa Rica account. ONVO's test mode uses the real Wallet flow with simulated charges.</li>
+                                </ul>
+                                <p>Activation status is shown in ONVO's Dashboard. A completed checkout in Odoo confirms payment;
+                                    it does not by itself identify the wallet selected.</p>
+                                <a href="https://docs.onvopay.com/en/payments/apple-pay" target="_blank" rel="noopener noreferrer">Apple Pay setup and troubleshooting</a>
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record>
 </odoo>

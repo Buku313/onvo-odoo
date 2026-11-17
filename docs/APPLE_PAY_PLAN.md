@@ -1,6 +1,6 @@
 # Apple Pay rollout plan
 
-Status: planned, not enabled or certified by this release. The current connector uses ONVO-hosted Checkout. ONVO test checkout creation and a locally signed webhook probe have succeeded; a completed wallet payment and delivery from ONVO still need acceptance testing.
+Status: the hosted self-service setup tab and sandbox test-link wizard are implemented in release 0.5.0; see [merchant setup instructions](APPLE_PAY_SETUP.md). The owner reports Apple Pay activated on the test account. A completed wallet payment and delivery from ONVO still need acceptance testing. The embedded SDK flow remains planned.
 
 ## Phase 1 — Apple Pay in the existing hosted checkout
 

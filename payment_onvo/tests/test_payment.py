@@ -3,7 +3,7 @@ from psycopg2 import IntegrityError
 from odoo.tools import mute_logger
 from ..const import INTEGRATION_VERSION
 from odoo.tests import TransactionCase, tagged
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 @tagged('post_install', '-at_install')
@@ -92,3 +92,64 @@ class TestOnvo(TransactionCase):
         with patch.object(type(self.provider), '_onvo_request', return_value=response):
             self.env['payment.transaction']._cron_onvo_sync()
         self.assertEqual(tx.state, 'done')
+
+    def make_setup_test(self, currency='USD'):
+        return self.env['payment.onvo.test.checkout'].create({
+            'provider_id': self.provider.id, 'currency': currency})
+
+    def test_setup_link_reuses_session_and_checks_payment(self):
+        wizard = self.make_setup_test()
+        with patch.object(type(self.provider), '_onvo_request', return_value={
+            'id': 'cs_setup', 'url': 'https://checkout.onvopay.com/pay/cs_setup'}) as api:
+            wizard.action_create_link()
+            wizard.action_create_link()
+            self.assertEqual(api.call_count, 1)
+            self.assertEqual(api.call_args.args[1]['lineItems'][0]['unitAmount'], 100)
+            self.assertEqual(wizard.payment_state, 'pending')
+            self.assertEqual(wizard.action_open_checkout()['url'], 'https://checkout.onvopay.com/pay/cs_setup')
+        with patch.object(type(self.provider), '_onvo_request', return_value={
+            'id': 'cs_setup', 'mode': 'test', 'status': 'complete', 'paymentStatus': 'paid',
+            'amountTotal': 100, 'currency': 'USD', 'paymentIntentId': 'pi_setup'}):
+            wizard.action_check_result()
+        self.assertEqual(wizard.transaction_id.state, 'done')
+        self.assertEqual(wizard.payment_state, 'done')
+        with self.assertRaises(ValidationError):
+            wizard.action_open_checkout()
+
+    def test_setup_link_crc_total(self):
+        self.env.ref('base.CRC').active = True
+        wizard = self.make_setup_test('CRC')
+        with patch.object(type(self.provider), '_onvo_request', return_value={
+            'id': 'cs_setup_crc', 'url': 'https://checkout.onvopay.com/pay/cs_setup_crc'}) as api:
+            wizard.action_create_link()
+            item = api.call_args.args[1]['lineItems'][0]
+            self.assertEqual((item['unitAmount'], item['currency']), (100000, 'CRC'))
+
+    def test_setup_link_rejects_live_mode_before_api_call(self):
+        wizard = self.make_setup_test()
+        live_values = {'state': 'enabled'} if 'state' in self.provider._fields else {'is_live': True}
+        self.provider.write({**live_values, 'onvo_secret_key': 'onvo_live_secret_fixture'})
+        with patch.object(type(self.provider), '_onvo_request') as api:
+            with self.assertRaises(ValidationError):
+                wizard.action_create_link()
+            with self.assertRaises(ValidationError):
+                self.provider.action_onvo_test_checkout()
+            api.assert_not_called()
+
+    def test_setup_link_rejects_public_user(self):
+        public = self.env.ref('base.public_user')
+        with patch.object(type(self.provider), '_onvo_request') as api:
+            with self.assertRaises(AccessError):
+                self.provider.with_user(public).action_onvo_test_checkout()
+            with self.assertRaises(AccessError):
+                self.env['payment.onvo.test.checkout'].with_user(public).create({
+                    'provider_id': self.provider.id, 'currency': 'USD'})
+            api.assert_not_called()
+
+    def test_setup_link_cannot_attach_unrelated_transaction(self):
+        wizard = self.make_setup_test()
+        wizard.transaction_id = self.make_tx()
+        with patch.object(type(self.provider), '_onvo_request') as api:
+            with self.assertRaises(ValidationError):
+                wizard.action_check_result()
+            api.assert_not_called()
