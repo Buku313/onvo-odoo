@@ -11,6 +11,17 @@ Publisher: ONVOPay · Support: antonio@onvopay.com · Free · LGPL-3
 
 The hosted provider has since been enabled in test mode using the owner's credentials. ONVO accepted the API key, actual sandbox Checkout session creation and redirect rendering succeeded, and the smoke session was expired/cancelled. A locally generated signed webhook probe returned 200 and an unsigned probe returned 403. These probes do not establish delivery from ONVO or a completed card/wallet payment.
 
+Validation: the Odoo 17 upgrade and all 13 integration tests passed. The artwork migration was separately checked against Odoo's resized images: legacy defaults are replaced, missing provider images are filled, custom artwork is retained, and payment settings are unchanged. Four standalone security tests passed. Fresh-install CI passed for every version:
+
+| Odoo | Tested commit | Successful CI run |
+| --- | --- | --- |
+| 17 | `c643fff` | https://github.com/Buku313/onvo-odoo/actions/runs/44151355299 (all four versions) |
+| 18 | `29bc528` | https://github.com/Buku313/onvo-odoo/actions/runs/44151562783 |
+| 19 | `1920869` | https://github.com/Buku313/onvo-odoo/actions/runs/44151562540 |
+| 20 | `eb3d025` | https://github.com/Buku313/onvo-odoo/actions/runs/44151563191 |
+
+Hosted Odoo 17 was upgraded to 17.0.0.4.0. Both image fields match the new artwork after Odoo resizing. The public checkout payment-method image was downloaded and verified against the stored field. The shop returned HTTP 200 and the provider remained published in test mode. The provider's administration image is access-controlled; anonymous requests for that image return Odoo's placeholder, while the public payment-method image is available normally.
+
 ## Setup and marketplace release 0.3.0 (beta)
 
 - Add the shared ONVO cover to the manifest and HTML listing for every supported major version.
