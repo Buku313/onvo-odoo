@@ -38,6 +38,12 @@
 <h3>Other ONVO payment methods</h3>
 <p>Looking for SINPE PIN bank transfers, Credix installments, Zunify or crypto payments? Check availability with ONVO for your merchant account and hosted Checkout. These are not separate native Odoo integrations in this release. Each method must be enabled, offered for the order and tested through completed Checkout reconciliation before merchant rollout. Credix financing is distinct from Odoo invoice payment terms.</p>
 <h3>Which webhook should I configure?</h3><p>For this hosted Checkout connector, keep <code>checkout_session.succeeded</code>. Direct Payment Intent API guides describe a different integration; do not replace the connector's webhook event with those events.</p>
+<h2>AI-assisted setup documentation included</h2>
+<p>Set up ONVO with your preferred AI assistant using the included <code>llms.txt</code> index and complete plain-text setup reference. Covers Odoo 17–20 configuration differences, API key handling, signed webhooks, Apple Pay, Google Pay, SINPE Móvil, troubleshooting and a verified test-to-live checklist.</p>
+<p><strong>No LLM API key or paid AI integration required by this module.</strong> These are readable instructions, not an autonomous configuration service. Your assistant must respect your permissions, keep credentials out of chat and logs, and verify actual payment outcomes.</p>
+<p><a href="https://raw.githubusercontent.com/Buku313/onvo-odoo/17.0/payment_onvo/static/docs/llms-full.txt" target="_blank" rel="noopener noreferrer">Read the AI setup reference</a></p>
+<p>Included in your module at <code>payment_onvo/static/docs/llms-full.txt</code>. Prompt: “Read this guide and help configure my ONVO provider in test mode. Keep secrets private, verify the webhook and ask before enabling real charges.”</p>
+<p><strong>Configuración asistida por IA:</strong> compartí la guía con tu asistente para configurar ONVO paso a paso, validar webhooks y resolver problemas sin exponer tus llaves.</p>
 <h2>External service and data transfer</h2>
 <p>An ONVO merchant account and ONVO API access are required. ONVO processing fees and account eligibility apply separately. When the merchant enables the provider, the connector sends the amount, currency, transaction reference and buyer email, integration identifier and optional referral code to ONVO. Payment identifiers and status are stored in Odoo. There is no separate connector activation service or analytics collector.</p>
 <h2>Scope of this release</h2>

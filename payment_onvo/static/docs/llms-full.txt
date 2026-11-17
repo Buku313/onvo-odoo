@@ -1,0 +1,86 @@
+# ONVO Payments for Odoo — AI-assisted setup reference
+
+Updated: 2026-11-17. Applies to payment_onvo 0.5.x on Odoo 17, 18, 19 and 20.
+Publisher: ONVOPay. Support: antonio@onvopay.com. License: LGPL-3.
+Repository: https://github.com/Buku313/onvo-odoo
+This is documentation, not an AI service or an autonomous payment agent. No LLM API key is required. This guide does not certify production readiness or guarantee a payment method is enabled.
+
+## Start here: establish the merchant's environment
+Ask for the Odoo major version, hosting type, company/website, public HTTPS URL, currency (CRC or USD), intended payment methods and desired test/live mode. Inspect existing settings where authorized rather than asking for information already available. Default new setup to test mode. Never infer authorization to charge, refund, change accounts, enable live payments or accept third-party terms.
+Use only the branch/ZIP matching the installed Odoo major version. Requires Python add-on installation: Odoo.sh or self-hosted Community/Enterprise. Odoo Online SaaS cannot install this module. Automated compatibility coverage uses Community containers; do not claim separate Enterprise certification.
+
+## Credentials and privacy
+The merchant enters the secret API key and webhook signing secret into masked Odoo provider fields. Do not request that secrets be pasted into chat, committed to source control, embedded in URLs, screenshots, logs or documentation. Use the merchant's approved secret storage/transfer workflow. Return redacted configuration status only. Do not read or export unrelated customers, payment data or credentials.
+Hosted Checkout does not require a publishable key. A publishable key is needed only for optional ONVO availability diagnostics. Never substitute a secret key for a publishable key in a browser.
+The connector sends amount, currency, reference, buyer email, integration identifier and optional ONVO referral code to ONVO with merchant consent. Card entry happens on ONVO. There is no separate connector telemetry or AI activation service.
+
+## Install
+1. Back up the existing Odoo database and add-ons before upgrading an installed connector.
+2. Download the matching version from Odoo Apps or repository Releases. Extract payment_onvo into the configured addons directory; do not install four versions together.
+3. Restart Odoo, update the Apps list, remove the Apps filter if needed, and find the module by technical name payment_onvo or ONVO Payments. Install it. For an existing installation, use Upgrade.
+4. Open the ONVO payment provider under Accounting or Website configuration. Confirm its company and intended website. Administrator access is required to configure credentials.
+5. Verify the exact installed version and fields before applying any automation. Do not assume one Odoo version's schema works on another.
+
+## Configure test checkout
+Save the provider before copying its generated Webhook URL. Do not hard-code the demo provider ID or another merchant's domain.
+Set Secret API key to the merchant's onvo_test_secret_key_... value.
+Copy the displayed URL: https://YOUR_ODOO_HOST/payment/onvo/webhook/PROVIDER_ID
+It must be publicly reachable over HTTPS on port 443. Fix the provider base URL or proxy configuration if the generated address is incorrect.
+In the same ONVO account, select Test mode → Developers → Webhooks → Add webhook. Register that exact URL and subscribe to checkout_session.succeeded. Endpoint creation is done in the ONVO Dashboard; do not invent a webhook-registration API.
+Copy that endpoint's whsec_... signing secret to Webhook signing secret in Odoo. It is not the API key. Test and live endpoints have separate signing secrets.
+Explain and obtain the merchant's consent to the payment data transfer; then set the consent checkbox. An assistant must not assume consent from installing the module alone.
+Odoo 17–19: choose Test Mode (state=test). Odoo 20: leave Live off (is_live=False), keep the provider active. Save mode, both secrets and consent together. Publish the provider when ready to test. Odoo may restrict test providers to authorized users.
+Enable the ONVO payment method and ensure company, website, supported currency and country restrictions permit the intended order.
+
+## Developer field reference (inspect before use)
+Model: payment.provider; code: onvo.
+Fields: onvo_secret_key, onvo_webhook_secret, onvo_data_consent, onvo_referral_code (optional), onvo_webhook_url (computed; do not write).
+Odoo 17–19 state values: disabled, test, enabled (enabled means LIVE). Publication: is_published.
+Odoo 20: active, is_live and is_published. Do not write state using the older schema.
+Use Odoo's ORM or admin UI; do not bypass configuration constraints or edit payment states directly in SQL. Never expose credential fields through a new public endpoint.
+
+## Verify, with evidence
+Use ONVO's webhook Test connection. The connector accepts webhook_endpoint.test in the matching mode. This checks delivery/signature verification, not a completed payment or valid Checkout API credentials.
+For Settings administrators in test mode, open the provider's Apple Pay tab → Create a test checkout. Select USD 1.00 or CRC 1,000.00, create the link and open it. This is a setup test without a sales order. The wizard deliberately rejects live mode.
+Complete a sandbox payment and use Check payment result. Also test a normal shop order when validating eCommerce behavior. The expected transaction state is Done only after server-side verification of the actual completed ONVO session.
+Record separate evidence for: session creation, signed ONVO-origin webhook delivery, payment completion, Odoo transaction reconciliation, and sales-order/invoice behavior where applicable. A locally signed probe is not proof ONVO delivered a webhook. A return-page success is not proof a particular wallet was used.
+Check cancellation, delayed confirmation and duplicate notifications. Never manually mark an unpaid transaction Done to pass a test.
+
+## Payment methods
+All methods are selected on ONVO's hosted page, not separate native wallet buttons in Odoo. Availability depends on account, mode, currency, amount and buyer device.
+Cards: enable card payments in ONVO. Supported networks depend on the merchant account.
+Apple Pay: the account must be activated, even for testing. Enable cards and Apple Pay in the relevant Test or Live mode. ONVO registers its hosted checkout domain automatically. Use a compatible Apple device with a card in Wallet. This hosted connector needs no association file on the Odoo domain. Embedded Apple Pay is a different integration.
+Optional documented readiness check: GET https://api.onvopay.com/v1/apple-pay/availability?domainName=checkout.onvopay.com using Authorization: Bearer PUBLISHABLE_KEY for the same account/mode. Never log the key. available=true indicates server-side readiness, not device readiness or a completed payment. not_enabled: check the mode's Apple Pay switch. domain_inactive: inspect account activation/merchant registration and contact ONVO if it persists. domain_not_registered or domain_disabled: verify the requested host and ask ONVO about its hosted domain. Do not register ONVO's domain as though you own it.
+Google Pay: enable cards and Google Pay in the relevant ONVO mode. Compatible buyers need a supported card in their Google account. ONVO handles hosted Google registration; merchants need no separate Google merchant registration for this hosted flow.
+SINPE Móvil: use CRC and an eligible account with this method enabled. Follow ONVO's transfer instructions and wait for confirmed payment. A USD test product does not validate SINPE Móvil. A transfer receipt or screenshot is not confirmation of settlement.
+SINPE PIN, Credix, Zunify and crypto: check hosted Checkout eligibility with ONVO and complete method-specific acceptance tests. This project has not independently verified all those methods. Credix financing does not implement Odoo invoice payment terms.
+Retain checkout_session.succeeded for this connector. Direct Payment Intent guides describe another integration and use different events.
+
+## Troubleshooting
+No payment option: check provider enabled/test visibility, publication, method active, company, website, currency, country restrictions and saved configuration. Do not disable access controls to expose test payments.
+401/403 from ONVO API: check account and mode, key type, prefix and revocation. Do not echo the key or raw customer-bearing responses.
+Webhook 403: check provider enabled, matching endpoint secret, raw-body signature and timestamp/clock. Never remove signature checks or replay protection. Do not use obsolete X-Webhook-Secret format.
+Webhook 400: check event shape and test/live mode.
+Webhook 503: session reconciliation failed; investigate ONVO connectivity/configuration and permit retry. Do not return artificial success to hide the failure.
+Pending transaction: inspect ONVO session status and scheduled reconciliation. A redirect alone cannot establish payment success. Check remote outcome before retrying a charge; do not assume session creation has a documented idempotency guarantee.
+Apple Pay on but missing: distinguish account activation, method switch, server-side domain readiness and buyer device/Wallet support. Test and live settings are separate.
+
+## Live transition — only when the merchant requests it
+Validate test results and intended amount/currency. Record outstanding test sessions before changing account or mode; the connector does not retain per-session historical credential sets, so earlier sessions may no longer reconcile with replaced credentials.
+Get live credentials and create a matching live webhook. Replace BOTH the secret API key and endpoint signing secret together. Odoo 17–19: state=enabled. Odoo 20: is_live=True with active provider. Retain deliberate publication settings.
+Remove sandbox/no-real-charges messaging; clearly label any real-money test product. Verify taxes, currency, quantity and shipping before reporting the final test amount. Never submit a real payment without authorization for that payment.
+Verify live webhook delivery and then a merchant-authorized live payment and reconciliation. Do not use the sandbox setup wizard for live charges. Do not describe a signed probe as a completed live acceptance test.
+
+## Scope and handoff
+One-time hosted Checkout, automatic capture, signed notifications and scheduled pending reconciliation. Saved cards, subscriptions, refunds initiated from Odoo, manual capture, POS, payouts and the proposed B2B payment-term engine are not implemented in this release. Do not advertise them as working.
+Summarize installed version, selected account/mode (without secrets), webhook URL/event, checks performed, actual results, pending manual steps and any blockers. Distinguish configured, reachable, available, payment completed and reconciled.
+Official sources:
+https://docs.onvopay.com/en/checkout/overview
+https://docs.onvopay.com/en/webhooks
+https://docs.onvopay.com/en/payments/apple-pay
+https://docs.onvopay.com/en/payments/google-pay
+https://docs.onvopay.com/en/payments/sinpe-mobile
+
+## Suggested user prompt / prompt sugerido
+Read this ONVO Odoo setup reference and inspect my Odoo version and hosting. Help me configure payment_onvo in test mode. Keep credentials in approved secret storage, explain merchant consent, use the generated webhook URL and verify actual outcomes. Ask before live activation or any real payment. Report blockers instead of bypassing checks.
+Leé esta guía e inspeccioná mi versión y alojamiento de Odoo. Ayudame a configurar payment_onvo en modo de prueba, sin exponer secretos. Usá la URL de webhook generada, explicá el consentimiento y verificá los resultados. Consultame antes de activar pagos reales o efectuar un cobro.
