@@ -4,9 +4,10 @@
 <field name="is_live" eval="False"/><field name="is_published" eval="False"/>
 <field name="module_id" ref="base.module_payment_onvo"/>
 <field name="redirect_form_view_id" ref="redirect_form"/>
+<field name="image_128" type="base64" file="payment_onvo/static/description/icon.png"/>
 </record>
 <record id="payment_method_onvo" model="payment.method">
-<field name="name">ONVO</field><field name="code">onvo</field><field name="sequence">20</field><field name="active" eval="True"/><field name="image" type="base64" file="payment_onvo/static/description/icon.png"/>
+<field name="name">ONVO</field><field name="code">onvo</field><field name="sequence">20</field><field name="active" eval="True"/><field name="image" type="base64" file="payment_onvo/static/img/payment_method.png"/>
 <field name="provider_id" ref="payment_provider_onvo"/>
 </record>
 </odoo>
