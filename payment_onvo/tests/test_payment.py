@@ -1,4 +1,7 @@
 from unittest.mock import patch
+from psycopg2 import IntegrityError
+from odoo.tools import mute_logger
+from ..const import INTEGRATION_VERSION
 from odoo.tests import TransactionCase, tagged
 from odoo.exceptions import ValidationError
 
@@ -9,7 +12,8 @@ class TestOnvo(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.provider = cls.env.ref('payment_onvo.payment_provider_onvo')
-        cls.provider.write({'state':'test', 'onvo_secret_key':'onvo_test_secret_fixture',
+        mode_values = {'state': 'test'} if 'state' in cls.provider._fields else {'is_live': False, 'is_published': True}
+        cls.provider.write({**mode_values, 'onvo_secret_key':'onvo_test_secret_fixture',
             'onvo_webhook_secret':'whsec_fixture', 'onvo_data_consent':True})
         cls.partner = cls.env['res.partner'].create({'name':'Checkout Test', 'email':'test@example.com'})
         cls.method = cls.env.ref('payment_onvo.payment_method_onvo')
@@ -28,7 +32,9 @@ class TestOnvo(TransactionCase):
             self.assertEqual(tx.state, 'pending')
             self.assertEqual(result['api_url'], 'https://checkout.onvopay.com/pay/cs_test')
             self.assertEqual(api.call_args.args[1]['lineItems'][0]['unitAmount'], 2500)
-            tx._get_specific_rendering_values({})
+            self.assertEqual(api.call_args.args[1]['metadata']['integration_version'], INTEGRATION_VERSION)
+            values = tx._get_processing_values()
+            self.assertIn('https://checkout.onvopay.com/pay/cs_test', values['redirect_form_html'])
             self.assertEqual(api.call_count, 1)
 
     def test_reconciliation_and_duplicate(self):
@@ -55,3 +61,16 @@ class TestOnvo(TransactionCase):
     def test_test_mode_rejects_live_key(self):
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
             self.provider.onvo_secret_key = 'onvo_live_secret_fixture'
+
+    def test_session_uniqueness_is_enforced(self):
+        tx = self.make_tx()
+        tx.onvo_session_id = 'cs_unique'
+        self.env.flush_all()
+        with self.assertRaises(IntegrityError), mute_logger('odoo.sql_db'), self.env.cr.savepoint():
+            other = tx.copy({'reference': 'ONVO-OTHER', 'onvo_session_id': 'cs_unique'})
+            other.flush_recordset()
+
+    def test_provider_is_registered_for_redirect_checkout(self):
+        self.assertIn(self.method, self.provider.payment_method_ids)
+        self.assertEqual(self.provider.redirect_form_view_id, self.env.ref('payment_onvo.redirect_form'))
+        self.assertTrue(self.env.ref('payment_onvo.ir_cron_onvo_sync').active)

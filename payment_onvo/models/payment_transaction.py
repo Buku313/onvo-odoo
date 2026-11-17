@@ -2,8 +2,9 @@ import logging
 from datetime import timedelta
 import secrets
 from urllib.parse import quote, urlencode
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, release
 from odoo.exceptions import ValidationError
+from ..const import INTEGRATION_VERSION
 from ..security import checkout_url, minor_amount, validate_payment, SUPPORTED_CURRENCIES
 
 _logger = logging.getLogger(__name__)
@@ -17,7 +18,14 @@ class PaymentTransaction(models.Model):
     onvo_checkout_url = fields.Char(copy=False, readonly=True, groups='base.group_system')
     onvo_return_token = fields.Char(copy=False, readonly=True, groups='base.group_system')
 
-    _sql_constraints = [('onvo_session_unique', 'unique(provider_id, onvo_session_id)', 'An ONVO session can only belong to one transaction.')]
+    if release.version_info[0] >= 19:
+        _onvo_session_unique = models.Constraint(
+            'unique(provider_id, onvo_session_id)',
+            'An ONVO session can only belong to one transaction.',
+        )
+    else:
+        _sql_constraints = [('onvo_session_unique', 'unique(provider_id, onvo_session_id)',
+                             'An ONVO session can only belong to one transaction.')]
 
     def _onvo_lock(self):
         self.ensure_one()
@@ -43,7 +51,7 @@ class PaymentTransaction(models.Model):
             'redirectUrl': return_url, 'cancelUrl': return_url,
             'captureMethod': 'automatic',
             'metadata': {'odoo_reference': self.reference, 'integration': 'onvo_odoo',
-                         'integration_version': '17.0.0.1.0',
+                         'integration_version': INTEGRATION_VERSION,
                          'referral_code': self.provider_id.onvo_referral_code or ''},
         })
         if not isinstance(session.get('id'), str) or not session['id']:
@@ -59,12 +67,13 @@ class PaymentTransaction(models.Model):
     def _onvo_sync(self):
         self.ensure_one()
         self._onvo_lock()
-        if self.provider_code != 'onvo' or not self.onvo_session_id or self.state == 'done':
+        if (self.provider_code != 'onvo' or not self.onvo_session_id or self.state == 'done'
+                or not self.provider_id._onvo_enabled()):
             return
         data = self.provider_id._onvo_request('checkout/sessions/' + quote(self.onvo_session_id, safe=''))
         try:
             paid = validate_payment(data, self.onvo_session_id, self.amount, self.currency_id.name,
-                                    'test' if self.provider_id.state == 'test' else 'live')
+                                    self.provider_id._onvo_mode())
         except ValueError as exc:
             raise ValidationError(_('ONVO payment verification failed: %s', str(exc))) from exc
         if paid:
@@ -77,9 +86,10 @@ class PaymentTransaction(models.Model):
 
     @api.model
     def _cron_onvo_sync(self):
+        provider_domain = [('provider_id.active', '=', True)] if release.version_info[0] >= 20 else [('provider_id.state', '!=', 'disabled')]
         transactions = self.search([('provider_code', '=', 'onvo'), ('state', '=', 'pending'),
-            ('onvo_session_id', '!=', False), ('provider_id.state', '!=', 'disabled'),
-            ('onvo_next_sync', '<=', fields.Datetime.now())], limit=50, order='onvo_next_sync, id')
+            ('onvo_session_id', '!=', False),
+            ('onvo_next_sync', '<=', fields.Datetime.now())] + provider_domain, limit=50, order='onvo_next_sync, id')
         for tx in transactions:
             tx.onvo_next_sync = fields.Datetime.now() + timedelta(minutes=5)
             try:

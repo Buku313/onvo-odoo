@@ -12,7 +12,8 @@ class TestOnvoHttp(HttpCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.provider = cls.env.ref('payment_onvo.payment_provider_onvo')
-        cls.provider.write({'state':'test', 'onvo_secret_key':'onvo_test_secret_fixture',
+        mode_values = {'state': 'test'} if 'state' in cls.provider._fields else {'is_live': False, 'is_published': True}
+        cls.provider.write({**mode_values, 'onvo_secret_key':'onvo_test_secret_fixture',
             'onvo_webhook_secret':'whsec_fixture', 'onvo_data_consent':True})
 
     def post_event(self, event, signed=True, age=0):

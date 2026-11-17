@@ -1,6 +1,6 @@
 {
     'name': 'ONVO Checkout',
-    'version': '17.0.0.1.0',
+    'version': '17.0.0.2.0',
     'category': 'Accounting/Payment Providers',
     'summary': 'ONVO hosted checkout with verified payment reconciliation',
     'description': 'Accept payments using ONVO hosted Checkout. Requires an ONVO merchant account. With merchant consent, sends the transaction amount, currency, reference and buyer email, integration identifier and optional referral code to ONVO. Card details are entered on ONVO.',

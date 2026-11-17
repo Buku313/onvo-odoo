@@ -11,7 +11,7 @@ services:
       interval: 5s
       retries: 20
   odoo:
-    image: odoo:17.0
+    image: odoo:${ODOO_VERSION:-17.0}
     depends_on:
       db:
         condition: service_healthy
@@ -21,7 +21,7 @@ services:
       PASSWORD: ${POSTGRES_PASSWORD}
     ports: ["127.0.0.1:8170:8069"]
     volumes:
-      - ./payment_onvo:/mnt/extra-addons/payment_onvo:ro
+      - ${ADDONS_PATH:-./payment_onvo}:/mnt/extra-addons/payment_onvo:ro
       - odoo:/var/lib/odoo
     command: ["odoo", "--database=onvo_demo", "--db-filter=^onvo_demo$$", "--no-database-list"]
 volumes:

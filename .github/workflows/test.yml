@@ -1,18 +1,26 @@
-name: Odoo 17 tests
+name: Odoo compatibility
 on: [push, pull_request]
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        odoo: [17, 18, 19, 20]
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: disposable-ci-database-only
+      ODOO_VERSION: ${{ matrix.odoo }}.0
+      ADDONS_PATH: ./build/payment_onvo
     steps:
       - uses: actions/checkout@v4
       - name: Security validation
         run: python3 -m unittest discover -s tests -v
+      - name: Build matching add-on
+        run: python3 scripts/build_version.py ${{ matrix.odoo }} --output build
       - name: Fresh Odoo install and integration tests
-        env:
-          POSTGRES_PASSWORD: disposable-ci-database-only
         run: |
           docker compose up -d db
           docker compose run --rm odoo odoo -d onvo_test -i payment_onvo --without-demo=all --test-enable --test-tags /payment_onvo --stop-after-init
       - name: Stop test containers
         if: always()
-        run: POSTGRES_PASSWORD=disposable-ci-database-only docker compose down -v
+        run: docker compose down -v

@@ -1,7 +1,10 @@
 import requests
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, release
 from odoo.exceptions import ValidationError
 from ..security import SUPPORTED_CURRENCIES
+
+
+MODE_FIELDS = ('is_live', 'is_published', 'active') if release.version_info[0] >= 20 else ('state',)
 
 
 class PaymentProvider(models.Model):
@@ -20,10 +23,27 @@ class PaymentProvider(models.Model):
         for provider in self:
             provider.onvo_webhook_url = '%s/payment/onvo/webhook/%s' % (provider.get_base_url().rstrip('/'), provider.id)
 
-    @api.constrains('state', 'code', 'onvo_secret_key', 'onvo_webhook_secret', 'onvo_data_consent')
+    def _onvo_mode(self):
+        self.ensure_one()
+        if release.version_info[0] >= 20:
+            return 'live' if self.is_live else 'test'
+        return 'test' if self.state == 'test' else 'live'
+
+    def _onvo_enabled(self):
+        self.ensure_one()
+        if release.version_info[0] >= 20:
+            return self.active and bool(self.onvo_secret_key and self.onvo_webhook_secret and self.onvo_data_consent)
+        return self.state != 'disabled'
+
+    def _onvo_requires_configuration(self):
+        if release.version_info[0] >= 20:
+            return self.active and (self.is_live or self.is_published or self.onvo_secret_key)
+        return self.state != 'disabled'
+
+    @api.constrains(*MODE_FIELDS, 'code', 'onvo_secret_key', 'onvo_webhook_secret', 'onvo_data_consent')
     def _check_onvo_configuration(self):
-        for provider in self.filtered(lambda p: p.code == 'onvo' and p.state != 'disabled'):
-            mode = 'test' if provider.state == 'test' else 'live'
+        for provider in self.filtered(lambda p: p.code == 'onvo' and p._onvo_requires_configuration()):
+            mode = provider._onvo_mode()
             if not (provider.onvo_secret_key or '').startswith('onvo_%s_secret_' % mode):
                 raise ValidationError(_('Use an ONVO secret key matching the provider mode.'))
             if not (provider.onvo_webhook_secret or '').startswith('whsec_'):
@@ -41,7 +61,7 @@ class PaymentProvider(models.Model):
     def _onvo_request(self, endpoint, payload=None):
         self.ensure_one()
         self._check_onvo_configuration()
-        if self.state == 'disabled':
+        if not self._onvo_enabled():
             raise ValidationError(_('ONVO is disabled.'))
         try:
             response = requests.request('POST' if payload is not None else 'GET',

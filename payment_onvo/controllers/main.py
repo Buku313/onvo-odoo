@@ -15,7 +15,7 @@ class OnvoController(http.Controller):
         except (ValueError, TypeError):
             raise Forbidden()
         if (not transaction or transaction.provider_code != 'onvo' or not token
-                or not hmac.compare_digest(transaction.onvo_return_token or '', token)):
+                or not token.isascii() or not hmac.compare_digest(transaction.onvo_return_token or '', token)):
             raise Forbidden()
         # Browser parameters never establish the payment result.
         try:
@@ -30,7 +30,7 @@ class OnvoController(http.Controller):
     @http.route('/payment/onvo/webhook/<int:provider_id>', type='http', auth='public', methods=['POST'], csrf=False, save_session=False)
     def webhook(self, provider_id, **kwargs):
         provider = request.env['payment.provider'].sudo().browse(provider_id).exists()
-        if not provider or provider.code != 'onvo' or provider.state == 'disabled':
+        if not provider or provider.code != 'onvo' or not provider._onvo_enabled():
             raise Forbidden()
         raw = request.httprequest.get_data()
         if len(raw) > 262144:
@@ -41,7 +41,7 @@ class OnvoController(http.Controller):
             event = json.loads(raw)
             if not isinstance(event, dict):
                 raise ValueError()
-            if event.get('mode') != ('test' if provider.state == 'test' else 'live'):
+            if event.get('mode') != provider._onvo_mode():
                 raise ValueError()
             if event.get('type') == 'webhook_endpoint.test':
                 return request.make_json_response({'received': True})
