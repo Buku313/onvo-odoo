@@ -1,4 +1,15 @@
-# ONVO Checkout for Odoo 17–20
+# ONVO Payments for Odoo 17–20 — Checkout & Apple Pay
+
+Free **ONVO / ONVOPay payment gateway for Odoo eCommerce in Costa Rica**. Accept one-time payments in **CRC and USD** through ONVO hosted checkout, with cards and Apple Pay when enabled and eligible on your merchant account. Includes signed webhooks, server-side payment verification and guided setup.
+
+**Pasarela de pagos ONVO para Odoo:** cobrá en colones y dólares mediante Checkout hospedado. Compatible con instalaciones que permiten módulos Python en Odoo.sh o servidores propios; no con Odoo Online SaaS. El conector es gratuito; las comisiones de ONVO aplican por separado.
+
+| Install from Odoo Apps | Source branch |
+| --- | --- |
+| [Odoo 17](https://apps.odoo.com/apps/modules/17.0/payment_onvo) | [17.0](https://github.com/Buku313/onvo-odoo/tree/17.0) |
+| [Odoo 18](https://apps.odoo.com/apps/modules/18.0/payment_onvo) | [18.0](https://github.com/Buku313/onvo-odoo/tree/18.0) |
+| [Odoo 19](https://apps.odoo.com/apps/modules/19.0/payment_onvo) | [19.0](https://github.com/Buku313/onvo-odoo/tree/19.0) |
+| [Odoo 20](https://apps.odoo.com/apps/modules/20.0/payment_onvo) | [20.0](https://github.com/Buku313/onvo-odoo/tree/20.0) |
 
 Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Free · LGPL-3
 
@@ -12,7 +23,7 @@ Planned B2B expansion: [payment model](docs/B2B_PAYMENT_MODEL.md), [comprehensiv
 
 ## Installation
 
-Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Do not install all four packages together.
+Download the ZIP matching your Odoo major version from this repository's Releases or the [Odoo Apps listing](https://apps.odoo.com/apps/modules/17.0/payment_onvo). Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Payments - Checkout & Apple Pay**. Do not install all four packages together.
 
 Targets are Community and Enterprise installations that allow Python add-ons, including Odoo.sh and self-hosted servers. Odoo Online SaaS cannot install this add-on. Community containers are used for automated compatibility tests; no proprietary Enterprise runtime is bundled or independently certified by this project. Future major versions require explicit compatibility testing.
 
