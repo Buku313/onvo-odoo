@@ -1,52 +1,58 @@
-# ONVO Checkout for Odoo
+# ONVO Checkout for Odoo 17–20
 
-Publisher: **ONVOPay** · Support: **antonio@onvopay.com**
+Publisher: **ONVOPay** · Support: **antonio@onvopay.com** · Free · LGPL-3
 
-Standalone Odoo 17 payment provider using ONVO hosted Checkout. Version `17.0.0.1.0` is a beta. Production readiness requires an actual ONVO sandbox checkout and signed webhook delivery, beyond the automated mock API tests.
+One connector, with matching builds and Git branches for Odoo **17, 18, 19 and 20**. Release `X.0.0.2.0` remains a beta until an actual ONVO sandbox checkout and signed webhook delivery are verified. Automated tests mock ONVO's API and do not replace that acceptance test.
 
-## Hosted demo
+[Odoo Apps publishing instructions](docs/ODOO_APPS_UPLOAD.md) · [Release record](docs/RELEASE.md)
+
+## Installation
+
+Download the ZIP matching your Odoo major version from this private repository's Releases. Copy its `payment_onvo` folder into an addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Do not install all four packages together.
+
+Targets are Community and Enterprise installations that allow Python add-ons, including Odoo.sh and self-hosted servers. Odoo Online SaaS cannot install this add-on. Community containers are used for automated compatibility tests; no proprietary Enterprise runtime is bundled or independently certified by this project. Future major versions require explicit compatibility testing.
+
+## Configure ONVO
+
+1. Open the ONVO payment provider under Accounting / Website configuration.
+2. Enter an ONVO test secret key (`onvo_test_secret_...`).
+3. Create a signed ONVO webhook using the URL displayed by the provider; subscribe to `checkout_session.succeeded`.
+4. Enter the endpoint's `whsec_...` signing secret and confirm the data-transfer notice.
+5. Odoo 17–19: choose **Test Mode** and publish the provider. Odoo 20: leave **Live** off, keep the provider active, and publish it after configuring test credentials.
+6. Complete a sandbox payment and verify that its Odoo transaction reaches Done. Test cancellation, duplicate webhook delivery and pending-payment reconciliation too.
+7. Only switch to live mode after configuring a matching live secret key and live webhook endpoint.
+
+ONVO's hosted page controls payment methods offered to the merchant. This connector supports one-time automatic capture in CRC and USD. Saved cards, refunds from Odoo, subscriptions, manual capture, POS and payouts are outside this release.
+
+## Data and referral attribution
+
+Odoo sends amount, currency, transaction reference, buyer email, `integration=onvo_odoo`, the connector version and an optional ONVO referral code directly to ONVO. Card details are entered on ONVO. Session and payment identifiers are stored in Odoo. The connector has no separate telemetry or activation service.
+
+Configure an ONVO-issued partner code in **ONVO Referral Code** when available. The metadata does not itself enroll a merchant in a partner program or guarantee commission. ONVO must recognize the attribution agreement and code.
+
+Browser returns use a random per-transaction token and cannot assert payment success. Webhook signatures are checked against the raw request body and a five-minute timestamp tolerance. Odoo independently fetches and validates session identity, mode, amount and currency. Completed transactions are not completed again on duplicate notification. A scheduled action reconciles pending sessions.
+
+## Upgrading the first beta
+
+Upgrade `payment_onvo` through Apps after replacing the folder. The `X.0.0.2.0` migration links the payment method and module to the existing provider without replacing its credentials. This is not a migration from the separate legacy `payment_onvopaycard` module, nor an upgrade of an Odoo database across major versions.
+
+## Build and test locally
+
+Use Python 3 and Docker. Create `.env` with a random `POSTGRES_PASSWORD`.
+
+```sh
+python3 -m unittest discover -s tests -v
+python3 scripts/build_version.py 20 --output build/odoo20 --zip
+POSTGRES_VERSION=16 ODOO_VERSION=20.0 ADDONS_PATH=./build/odoo20/payment_onvo docker compose -p onvo-test20 up -d db
+POSTGRES_VERSION=16 ODOO_VERSION=20.0 ADDONS_PATH=./build/odoo20/payment_onvo docker compose -p onvo-test20 run --rm odoo odoo -d onvo_test20 -i payment_onvo --without-demo=all --test-enable --test-tags /payment_onvo --stop-after-init
+```
+
+Odoo 20 needs PostgreSQL 16 or newer; the test uses an isolated Compose project to keep that data separate from PostgreSQL 15. Never attach an existing PostgreSQL data volume to a different major image. Use 17, 18 or 19 similarly. The build command refuses to overwrite an existing output folder. Use a fresh output folder for each build. GitHub Actions runs the four-version test matrix. Do not advertise compatibility solely because a ZIP can be generated.
+
+## Hosted sandbox
 
 https://onvo-odoo.18.207.41.62.sslip.io/shop
 
-The storefront is online. ONVO payment acceptance is disabled until the owner adds sandbox credentials and completes a test checkout. This is a demo, not a production store.
+The existing Odoo 17 demo is retained at the owner's request. It costs USD 12/month on AWS Lightsail. Its ONVO payment provider remains disabled until the owner supplies sandbox credentials. The demo is not a production store.
 
-## Install
-
-Copy `payment_onvo` into an Odoo 17 addons directory, restart Odoo, update the Apps list, remove the Apps filter and install **ONVO Checkout**. Odoo Community and Enterprise on your own infrastructure or Odoo.sh are supported targets. Odoo Online SaaS cannot install custom Python modules.
-
-1. Open Accounting → Configuration → Payment Providers → ONVO.
-2. Set the provider to test mode with an `onvo_test_secret_...` key.
-3. Create a signed ONVO webhook at the URL displayed in the provider. Subscribe to `checkout_session.succeeded`.
-4. Enter the endpoint's `whsec_...` secret and confirm the data-transfer notice.
-5. Publish the provider when ready for a sandbox checkout. Complete a test payment and verify its Odoo transaction becomes Done.
-6. For live use, configure a live endpoint and matching live key before enabling production mode.
-
-The merchant's ONVO account controls which payment methods appear in hosted Checkout. This release supports CRC and USD, one-time automatic capture. It does not claim refund, saved-card, recurring billing, manual capture, POS or payout support.
-
-## Data flow
-
-Odoo sends amount, currency, transaction reference and buyer email directly to ONVO. Card details stay on ONVO. The connector stores session and payment identifiers in Odoo and uses no third-party telemetry or activation service. Existing `payment_onvopaycard` data is not migrated; this module is installed separately.
-
-Browser returns are authenticated with a per-transaction random token. They cannot supply a successful payment status. Signed webhook events are checked against the raw body and a five-minute timestamp tolerance. Odoo then fetches the session using the merchant's secret key and verifies its identity, mode, amount and currency before completion. Repeated completion notifications do not re-complete the transaction. Pending sessions are also polled by a scheduled action.
-
-## Referral attribution
-
-Every checkout includes `integration=onvo_odoo` and the connector version in ONVO metadata. An optional ONVO-issued referral code can be configured by the administrator and is sent as `referral_code`. This is disclosed in the data-transfer notice. It does not automatically enroll a merchant into a partner program or promise commission; ONVO must confirm the attribution contract and issue the actual code.
-
-## Local test environment
-
-Create `.env` with a random `POSTGRES_PASSWORD`. Run:
-
-```sh
-docker compose up -d db
-docker compose run --rm odoo odoo -d onvo_test -i payment_onvo --without-demo=all --test-enable --test-tags /payment_onvo --stop-after-init
-python3 -m unittest discover -s tests -v
-```
-
-`compose.yaml` binds Odoo to localhost only. An internet deployment additionally requires HTTPS, a non-default administrator password, a fixed database filter, private PostgreSQL networking, backups and ONVO sandbox credentials. Never publish the default Odoo admin account.
-
-## Release
-
-Only `payment_onvo/` belongs in the installable ZIP. Keep the branch named `17.0` for the Odoo Apps repository scanner. Marketplace content is in `payment_onvo/static/description/`. Screenshots, live test URL and sandbox acceptance must be settled before submission. Public documentation references are listed in `docs/RELEASE.md`.
-
-License: LGPL-3.0. ONVO and Odoo names identify the integrated services.
+Secrets and local deployment records are excluded from Git. The server administrator login is not published in this repository.

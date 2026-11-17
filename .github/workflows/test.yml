@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: disposable-ci-database-only
+      POSTGRES_VERSION: ${{ matrix.odoo == 20 && '16' || '15' }}
       ODOO_VERSION: ${{ matrix.odoo }}.0
       ADDONS_PATH: ./build/payment_onvo
     steps:
